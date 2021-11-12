@@ -9,7 +9,8 @@ function App() {
   const [pede, setPede] = React.useState("")
 
   React.useEffect(() => {
-    fetch("/api/time")
+    //fetch(`${process.env.REACT_APP_FLASK_BACKEND_URL}/api/time`)
+    fetch(`/api/time`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
@@ -33,8 +34,8 @@ function App() {
 
   return (
     <div className="App">
-      <h2>back end = {process.env.REACT_APP_FLASK_BACKEND_URL}</h2>
-      <h3>is dev = {process.env.NODE_ENV == "development" ? "dev" : "prod"}</h3>
+      <h2>back end = {process.env.REACT_APP_FLASK_BACKEND_URL_PROD}</h2>
+      <h3>node env = {process.env.NODE_ENV}</h3>
       <p>
         The current time is {currentTime === "" ? "nik c mor" : currentTime}
       </p>

@@ -10,9 +10,10 @@ console.log("isDev =" + isDev.toString())
 module.exports = (app) => {
   app.use(
     proxy("/api", {
-      target: isDev
-        ? `http://127.0.0.1:${process.env.REACT_APP_FLASK_PORT}`
-        : process.env.REACT_APP_FLASK_BACKEND_URL,
+      /*target: isDev
+        ? `${process.env.REACT_APP_FLASK_BACKEND_URL_DEV}:${process.env.REACT_APP_FLASK_PORT_DEV}`
+        : process.env.REACT_APP_FLASK_BACKEND_URL_PROD,*/
+      target: process.env.REACT_APP_FLASK_BACKEND_URL_PROD,
       changeOrigin: true,
       secure: true,
     })
