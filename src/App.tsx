@@ -33,6 +33,8 @@ function App() {
 
   return (
     <div className="App">
+      <h2>back end = {process.env.REACT_APP_FLASK_BACKEND_URL}</h2>
+      <h3>is dev = {process.env.NODE_ENV == "development" ? "dev" : "prod"}</h3>
       <p>
         The current time is {currentTime === "" ? "nik c mor" : currentTime}
       </p>
