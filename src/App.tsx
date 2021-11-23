@@ -1,15 +1,22 @@
 import React from "react"
-import logo from "./logo.svg"
 import "./App.css"
 
 function App() {
-  const isDev = process.env.NODE_ENV === "development"
+  const novak = {
+    id: null,
+    username: null,
+    email: null,
+    password: null,
+    is_active: null,
+    date_joined: null,
+    last_login: null,
+  }
 
   const [currentTime, setCurrentTime] = React.useState("")
-  const [pede, setPede] = React.useState("")
+  const [name, setName] = React.useState("")
+  const [user, setUser] = React.useState(novak)
 
   React.useEffect(() => {
-    //fetch(`${process.env.REACT_APP_FLASK_BACKEND_URL}/api/time`)
     fetch(`/api/time`)
       .then((res) => res.json())
       .then((data) => {
@@ -19,18 +26,30 @@ function App() {
   }, [])
 
   React.useEffect(() => {
-    fetch(`/greet/${pede}`)
+    fetch(`/api/greet/${name}`)
       .then((res) => res.json())
       .then((data) => {
-        setPede(data.greeting)
+        console.log(data)
+        setUser(data)
       })
   }, [])
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPede(event.target.value)
+  const fetchUser = async function () {
+    const res = await fetch(`/api/greet/${name}`)
+    const body = await res.json()
+    console.log(JSON.stringify(body))
+    setUser(body)
   }
 
-  const handleSubmit = () => {}
+  const handleSubmit = (event: React.SyntheticEvent) => {
+    event.preventDefault()
+    fetchUser()
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault()
+    setName(event.target.value)
+  }
 
   return (
     <div className="App">
@@ -39,14 +58,15 @@ function App() {
       <p>
         The current time is {currentTime === "" ? "nik c mor" : currentTime}
       </p>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label>
           Nom :
-          <input type="text" name="pede" value={pede} onChange={handleChange} />
+          <input type="text" name="name" value={name} onChange={handleChange} />
         </label>
         <input type="submit" value="Envoyer" />
       </form>
-      <p>{pede}</p>
+      <p>in the form: {name}</p>
+      <p>user is :{JSON.stringify(user)}</p>
     </div>
   )
 }
