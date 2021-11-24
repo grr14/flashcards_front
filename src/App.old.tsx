@@ -9,7 +9,7 @@ function App() {
     password: null,
     is_active: null,
     date_joined: null,
-    last_login: null,
+    last_login: null
   }
 
   const [currentTime, setCurrentTime] = React.useState("")

@@ -106,12 +106,12 @@ function Login() {
     console.log("You pressed login")
     let opts = {
       username: username,
-      password: password,
+      password: password
     }
     console.log(opts)
     fetch(`/api/login`, {
       method: "post",
-      body: JSON.stringify(opts),
+      body: JSON.stringify(opts)
     })
       .then((r) => r.json())
       .then((token) => {
