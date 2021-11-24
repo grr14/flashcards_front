@@ -1,74 +1,161 @@
-import React from "react"
-import "./App.css"
+/** @jsxRuntime classic */
+/** @jsx jsx */
+import { css, jsx } from "@emotion/react"
 
-function App() {
-  const novak = {
-    id: null,
-    username: null,
-    email: null,
-    password: null,
-    is_active: null,
-    date_joined: null,
-    last_login: null,
-  }
+import React, { useEffect } from "react"
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 
-  const [currentTime, setCurrentTime] = React.useState("")
-  const [name, setName] = React.useState("")
-  const [user, setUser] = React.useState(novak)
-
-  React.useEffect(() => {
-    fetch(`/api/time`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        setCurrentTime(data.now)
-      })
-  }, [])
-
-  React.useEffect(() => {
-    fetch(`/api/greet/${name}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        setUser(data)
-      })
-  }, [])
-
-  const fetchUser = async function () {
-    const res = await fetch(`/api/greet/${name}`)
-    const body = await res.json()
-    console.log(JSON.stringify(body))
-    setUser(body)
-  }
-
-  const handleSubmit = (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    fetchUser()
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault()
-    setName(event.target.value)
-  }
-
+export default function App() {
   return (
-    <div className="App">
-      <h2>back end = {process.env.REACT_APP_FLASK_BACKEND_URL_PROD}</h2>
-      <h3>node env = {process.env.NODE_ENV}</h3>
-      <p>
-        The current time is {currentTime === "" ? "nik c mor" : currentTime}
-      </p>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Nom :
-          <input type="text" name="name" value={name} onChange={handleChange} />
-        </label>
-        <input type="submit" value="Envoyer" />
-      </form>
-      <p>in the form: {name}</p>
-      <p>user is :{JSON.stringify(user)}</p>
-    </div>
+    <Router>
+      <div
+        css={css`
+          min-height: 100vh;
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          background-color: #b5b5b5;
+          display: flex;
+          flex-direction: column;
+          color: #323232;
+        `}
+      >
+        <header
+          css={css`
+            display: flex;
+            width: 100%;
+          `}
+        >
+          <nav
+            css={css`
+              width: 100%;
+            `}
+          >
+            <ul
+              css={css`
+                display: flex;
+                width: 50%;
+              `}
+            >
+              <li
+                css={css`
+                  flex: 1;
+                `}
+              >
+                <Link to="/">Home</Link>
+              </li>
+              <li
+                css={css`
+                  flex: 1;
+                `}
+              >
+                <Link to="/login">Login</Link>
+              </li>
+              <li
+                css={css`
+                  flex: 1;
+                `}
+              >
+                <Link to="/secret">Secret</Link>
+              </li>
+            </ul>
+          </nav>
+        </header>
+
+        <div
+          css={css`
+            background-color: pink;
+            flex: 1;
+          `}
+        >
+          {/* A <Switch> looks through its children <Route>s and
+            renders the first one that matches the current URL. */}
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </div>
+
+        <footer
+          css={css`
+            width: 100%;
+            padding: 10px 0 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75em;
+          `}
+        >
+          flashcards GRR
+        </footer>
+      </div>
+    </Router>
   )
 }
 
-export default App
+function Home() {
+  return <h2>Home</h2>
+}
+
+function Login() {
+  const [username, setUsername] = React.useState("")
+  const [password, setPassword] = React.useState("")
+
+  const onSubmitClick = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    console.log("You pressed login")
+    let opts = {
+      username: username,
+      password: password,
+    }
+    console.log(opts)
+    fetch(`/api/login`, {
+      method: "post",
+      body: JSON.stringify(opts),
+    })
+      .then((r) => r.json())
+      .then((token) => {
+        console.log("token=" + JSON.stringify(token))
+        if (token.access_token) {
+          console.log("succes")
+        } else {
+          console.log("Please type in correct username/password")
+        }
+      })
+  }
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+  }
+
+  return (
+    <div>
+      <h2>Login</h2>
+      <form action="#">
+        <div>
+          <input
+            type="text"
+            placeholder="Username"
+            onChange={handleUsernameChange}
+            value={username}
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={handlePasswordChange}
+            value={password}
+          />
+        </div>
+        <button onClick={onSubmitClick} type="submit">
+          Login Now
+        </button>
+      </form>
+    </div>
+  )
+}
