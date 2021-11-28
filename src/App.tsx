@@ -3,26 +3,58 @@
 import { css, jsx } from "@emotion/react"
 
 import React, { useEffect } from "react"
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate
+} from "react-router-dom"
+import { login, useAuth, logout, authFetch } from "./auth"
+import { Either, LoginError, Session, User } from "./common/types"
 
-export default function App() {
+const RequireAuth = ({
+  children,
+  isLogged
+}: {
+  children: JSX.Element
+  isLogged: Boolean
+}) => {
+  let location = useLocation()
+
+  console.log("isLogged ? " + isLogged.toString())
+
+  if (!isLogged) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Navigate to="/login" state={{ from: location }} />
+  }
+
+  return children
+}
+
+const App = () => {
+  const [isLogged] = useAuth()
   return (
     <Router>
       <div
         css={css`
-          min-height: 100vh;
-          max-width: 100%;
-          margin: 0;
-          padding: 0;
           background-color: #b5b5b5;
+          flex: 1;
           display: flex;
           flex-direction: column;
           color: #323232;
+          font-family: sans-serif;
         `}
       >
         <header
           css={css`
             display: flex;
+            padding: 0 5px;
             width: 100%;
           `}
         >
@@ -34,12 +66,16 @@ export default function App() {
             <ul
               css={css`
                 display: flex;
-                width: 50%;
+                justify-content: space-evenly;
+                align-items: center;
               `}
             >
               <li
                 css={css`
                   flex: 1;
+                  display: flex;
+                  justify-content: flex-start;
+                  align-items: center;
                 `}
               >
                 <Link to="/">Home</Link>
@@ -47,17 +83,44 @@ export default function App() {
               <li
                 css={css`
                   flex: 1;
-                `}
-              >
-                <Link to="/login">Login</Link>
-              </li>
-              <li
-                css={css`
-                  flex: 1;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
                 `}
               >
                 <Link to="/secret">Secret</Link>
               </li>
+              {!isLogged ? (
+                <li
+                  css={css`
+                    flex: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  `}
+                >
+                  <Login />
+                </li>
+              ) : (
+                <li
+                  css={css`
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                  `}
+                >
+                  <p
+                    css={css`
+                      margin: 0;
+                    `}
+                  >
+                    Hello, user
+                  </p>
+                  <button onClick={() => logout()}>Logout</button>
+                </li>
+              )}
             </ul>
           </nav>
         </header>
@@ -71,8 +134,16 @@ export default function App() {
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <Routes>
-            <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
+            <Route
+              path="secret"
+              element={
+                <RequireAuth isLogged={isLogged}>
+                  <Secret />
+                </RequireAuth>
+              }
+            ></Route>
+            <Route path="/login" element={<NeedLogin />} />
           </Routes>
         </div>
 
@@ -97,65 +168,107 @@ function Home() {
   return <h2>Home</h2>
 }
 
-function Login() {
-  const [username, setUsername] = React.useState("")
-  const [password, setPassword] = React.useState("")
+function NeedLogin() {
+  return <h2>Please login to access this page.</h2>
+}
 
-  const onSubmitClick = (e: React.SyntheticEvent) => {
+function Login() {
+  const [userInput, setUserInput] = React.useState<Partial<User>>({
+    username: "",
+    password: ""
+  })
+
+  let navigate = useNavigate()
+  const [authError, setAuthError] = React.useState<boolean>(false)
+
+  const onSubmitClick = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     console.log("You pressed login")
-    let opts = {
-      username: username,
-      password: password
-    }
-    console.log(opts)
-    fetch(`/api/login`, {
+
+    console.log(userInput)
+    const response = await fetch(`/api/login`, {
       method: "post",
-      body: JSON.stringify(opts)
+      body: JSON.stringify(userInput)
     })
-      .then((r) => r.json())
-      .then((token) => {
-        console.log("token=" + JSON.stringify(token))
-        if (token.access_token) {
-          console.log("succes")
-        } else {
-          console.log("Please type in correct username/password")
-        }
-      })
+
+    const data: Either<Session, LoginError> = await response.json()
+    if (response.ok) {
+      setAuthError(false)
+      if (data.access_token) {
+        login(data)
+        navigate("/Secret")
+      } else {
+        console.log("error")
+      }
+    } else {
+      setAuthError(true)
+      console.log(`error = ${JSON.stringify(data)}`)
+    }
   }
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value)
-  }
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInput({ ...userInput, [e.target.name]: e.target.value })
   }
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form action="#">
+    <div
+      css={css`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      `}
+    >
+      <form
+        action="#"
+        css={css`
+          display: flex;
+        `}
+      >
         <div>
           <input
             type="text"
             placeholder="Username"
-            onChange={handleUsernameChange}
-            value={username}
+            name="username"
+            onChange={handleChange}
+            value={userInput.username}
           />
         </div>
         <div>
           <input
             type="password"
             placeholder="Password"
-            onChange={handlePasswordChange}
-            value={password}
+            name="password"
+            onChange={handleChange}
+            value={userInput.password}
           />
         </div>
         <button onClick={onSubmitClick} type="submit">
-          Login Now
+          Login
         </button>
       </form>
     </div>
   )
 }
+
+function Secret() {
+  const [message, setMessage] = React.useState("")
+
+  useEffect(() => {
+    authFetch("/api/protected")
+      .then((response) => {
+        if (response.status === 401) {
+          setMessage("Sorry you aren't authorized!")
+          return
+        }
+        return response.json()
+      })
+      .then((response) => {
+        if (response && response.message) {
+          setMessage(response.message)
+        }
+      })
+  }, [])
+  return <h2>Secret: {message}</h2>
+}
+
+export default App
