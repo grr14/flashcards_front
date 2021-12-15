@@ -1,12 +1,14 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import { css, jsx } from "@emotion/react"
+import React from "react"
 
 import { BrowserRouter, Link } from "react-router-dom"
 import { useAuth, logout } from "./auth"
 
 import Footer from "./components/Footer"
 import LoginForm from "./components/LoginForm"
+import RegisterForm from "./components/RegisterForm"
 import Router from "./router/Router"
 
 const App = () => {
@@ -63,16 +65,28 @@ const App = () => {
                 <Link to="/secret">Secret</Link>
               </li>
               {!isLogged ? (
-                <li
-                  css={css`
-                    flex: 1;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  `}
-                >
-                  <LoginForm />
-                </li>
+                <React.Fragment>
+                  <li
+                    css={css`
+                      flex: 1;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    `}
+                  >
+                    <LoginForm />
+                  </li>
+                  <li
+                    css={css`
+                      flex: 1;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    `}
+                  >
+                    <RegisterForm />
+                  </li>
+                </React.Fragment>
               ) : (
                 <li
                   css={css`
