@@ -1,11 +1,8 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-
-import { css, jsx } from "@emotion/react"
 import React, { useRef } from "react"
 
 import { Button } from "@chakra-ui/button"
 import {
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -19,36 +16,16 @@ import {
   ModalOverlay,
   useDisclosure
 } from "@chakra-ui/react"
-import * as yup from "yup"
 import { Field, Form, Formik, FormikState } from "formik"
 import { useNavigate } from "react-router"
 import { VERIFY_EMAIL } from "../constants/routes"
-
-interface RegisterFormValues {
-  username: string
-  email: string
-  password: string
-}
+import { RegisterFormValues } from "../common/types"
+import { registerFormValidationSchema } from "../constants/form"
 
 const RegisterForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const initialRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
-
-  const validationSchema = yup.object({
-    username: yup
-      .string()
-      .min(8, "Username should be of minimum 8 characters length")
-      .required("Username is required"),
-    email: yup
-      .string()
-      .email("Enter a valid email")
-      .required("Email is required"),
-    password: yup
-      .string()
-      .min(8, "Password should be of minimum 8 characters length")
-      .required("Password is required")
-  })
 
   const onSubmitRegister = async (
     values: RegisterFormValues,
@@ -60,15 +37,14 @@ const RegisterForm = () => {
     const response = await fetch(`/api/register`, {
       method: "post",
       body: JSON.stringify({
-        username: username,
-        email: email,
-        password: password
+        username,
+        email,
+        password
       })
     })
 
     const data = await response.json()
     if (response.status === 200) {
-      console.log("super !!")
       onClose()
       resetForm()
       navigate(VERIFY_EMAIL)
@@ -79,15 +55,18 @@ const RegisterForm = () => {
 
   return (
     <React.Fragment>
-      <Button onClick={onOpen}>Register</Button>
+      <Button onClick={onOpen} size="md">
+        Register
+      </Button>
 
       <Formik
         initialValues={{
           username: "",
           email: "",
-          password: ""
+          password: "",
+          passwordConfirmation: ""
         }}
-        validationSchema={validationSchema}
+        validationSchema={registerFormValidationSchema}
         onSubmit={(values, { resetForm }) => {
           onSubmitRegister(values, resetForm)
         }}
@@ -99,7 +78,7 @@ const RegisterForm = () => {
               <ModalContent>
                 <ModalHeader>Create your account</ModalHeader>
                 <ModalCloseButton />
-
+                <Divider mb={15} />
                 <ModalBody>
                   <Field name="username">
                     {({ field, form }: any) => (
@@ -107,6 +86,8 @@ const RegisterForm = () => {
                         isInvalid={
                           form.errors.username && form.touched.username
                         }
+                        isRequired
+                        mb={15}
                       >
                         <FormLabel htmlFor="username">Username</FormLabel>
                         <Input
@@ -125,6 +106,8 @@ const RegisterForm = () => {
                     {({ field, form }: any) => (
                       <FormControl
                         isInvalid={form.errors.email && form.touched.email}
+                        isRequired
+                        mb={15}
                       >
                         <FormLabel htmlFor="email">Email</FormLabel>
                         <Input {...field} id="email" placeholder="email" />
@@ -138,6 +121,8 @@ const RegisterForm = () => {
                         isInvalid={
                           form.errors.password && form.touched.password
                         }
+                        isRequired
+                        mb={15}
                       >
                         <FormLabel htmlFor="password">Password</FormLabel>
                         <Input
@@ -152,14 +137,35 @@ const RegisterForm = () => {
                       </FormControl>
                     )}
                   </Field>
+                  <Field name="passwordConfirmation">
+                    {({ field, form }: any) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.passwordConfirmation &&
+                          form.touched.passwordConfirmation
+                        }
+                        isRequired
+                      >
+                        <FormLabel htmlFor="passwordConfirmation">
+                          Confirm your password
+                        </FormLabel>
+                        <Input
+                          {...field}
+                          id="passwordConfirmation"
+                          placeholder="password"
+                          type="password"
+                        />
+                        <FormErrorMessage>
+                          {form.errors.passwordConfirmation}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
                 </ModalBody>
-
                 <ModalFooter>
-                  {
-                    <Button type="submit" colorScheme="blue" mr={3}>
-                      Register
-                    </Button>
-                  }
+                  <Button type="submit" colorScheme="blue" mr={5}>
+                    Register
+                  </Button>
                   <Button onClick={onClose}>Cancel</Button>
                 </ModalFooter>
               </ModalContent>

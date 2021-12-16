@@ -1,21 +1,12 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-import { css, jsx } from "@emotion/react"
+import { Box, Text, Center } from "@chakra-ui/react"
 
 const Footer = () => {
   return (
-    <footer
-      css={css`
-        width: 100%;
-        padding: 10px 0 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 0.75em;
-      `}
-    >
-      flashcards GRR
-    </footer>
+    <Box as="footer">
+      <Center>
+        <Text>Flashcards GRR</Text>
+      </Center>
+    </Box>
   )
 }
 

@@ -60,7 +60,9 @@ const LoginForm = () => {
 
   return (
     <React.Fragment>
-      <Button onClick={onOpen}>Login</Button>
+      <Button onClick={onOpen} size="md">
+        Login
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

@@ -1,15 +1,13 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import "./index.css"
 import App from "./App"
-import GlobalStyles from "./common/globalStyle"
 import reportWebVitals from "./reportWebVitals"
 import { ChakraProvider } from "@chakra-ui/react"
+import { extendedGlobalTheme } from "./common/theme"
 
 ReactDOM.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <GlobalStyles />
+    <ChakraProvider theme={extendedGlobalTheme}>
       <App />
     </ChakraProvider>
   </React.StrictMode>,

@@ -30,3 +30,10 @@ export type User = {
   date_joined?: Date
   roles?: Role
 }
+
+export type RegisterFormValues = {
+  username: string
+  email: string
+  password: string
+  passwordConfirmation: string
+}
