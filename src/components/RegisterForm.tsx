@@ -21,6 +21,7 @@ import { useNavigate } from "react-router"
 import { VERIFY_EMAIL } from "../constants/routes"
 import { RegisterFormValues } from "../common/types"
 import { registerFormValidationSchema } from "../constants/form"
+import PasswordInput from "./PasswordInput"
 
 const RegisterForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -81,6 +82,7 @@ const RegisterForm = () => {
                 <Divider mb={15} />
                 <ModalBody>
                   <Field name="username">
+                    {/* https://github.com/jaredpalmer/formik/issues/2086 */}
                     {({ field, form }: any) => (
                       <FormControl
                         isInvalid={
@@ -125,11 +127,10 @@ const RegisterForm = () => {
                         mb={15}
                       >
                         <FormLabel htmlFor="password">Password</FormLabel>
-                        <Input
-                          {...field}
-                          id="password"
-                          placeholder="password"
-                          type="password"
+                        <PasswordInput
+                          id={"password"}
+                          placeholder={"password"}
+                          field={field}
                         />
                         <FormErrorMessage>
                           {form.errors.password}
@@ -147,13 +148,12 @@ const RegisterForm = () => {
                         isRequired
                       >
                         <FormLabel htmlFor="passwordConfirmation">
-                          Confirm your password
+                          Password confirmation
                         </FormLabel>
-                        <Input
-                          {...field}
+                        <PasswordInput
                           id="passwordConfirmation"
                           placeholder="password"
-                          type="password"
+                          field={field}
                         />
                         <FormErrorMessage>
                           {form.errors.passwordConfirmation}
