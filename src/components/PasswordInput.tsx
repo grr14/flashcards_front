@@ -36,6 +36,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           icon={isPasswordVisible ? <ViewOffIcon /> : <ViewIcon />}
           aria-label="Toggle password visibility"
           _focus={{ boxShadow: "none" }}
+          _hover={{ background: "none" }}
+          _active={{ background: "none" }}
         />
       </InputRightElement>
     </InputGroup>

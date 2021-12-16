@@ -1,12 +1,13 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-
-import { css, jsx } from "@emotion/react"
 import React from "react"
 import { useNavigate } from "react-router"
 import { login } from "../auth"
 import { Button } from "@chakra-ui/button"
 import {
+  Divider,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,34 +15,45 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
+  Alert,
+  AlertIcon
 } from "@chakra-ui/react"
-import { User, Either, Session, LoginError } from "../common/types"
+import { Either, Session, LoginError, LoginFormValues } from "../common/types"
 import { SECRET } from "../constants/routes"
+import { Field, Form, Formik, FormikState } from "formik"
+import PasswordInput from "./PasswordInput"
+import { loginFormValidationSchema } from "../constants/form"
 
 const LoginForm = () => {
-  const [userInput, setUserInput] = React.useState<Partial<User>>({
-    username: "",
-    password: ""
-  })
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const navigate = useNavigate()
   const [authError, setAuthError] = React.useState<boolean>(false)
 
-  const onSubmitClick = async (e: React.SyntheticEvent) => {
-    e.preventDefault()
-
-    console.log(userInput)
+  const onSubmitLogin = async (
+    values: LoginFormValues,
+    resetForm: (
+      nextState?: Partial<FormikState<LoginFormValues>> | undefined
+    ) => void
+  ) => {
+    const { username, password } = values
     const response = await fetch(`/api/login`, {
       method: "post",
-      body: JSON.stringify(userInput)
+      body: JSON.stringify({
+        username,
+        password
+      })
     })
 
     const data: Either<Session, LoginError> = await response.json()
     if (response.ok) {
       setAuthError(false)
       if (data.access_token) {
+        setAuthError(false)
         login(data)
+        onClose()
+        resetForm()
         navigate(SECRET)
       } else {
         console.log("error")
@@ -52,70 +64,94 @@ const LoginForm = () => {
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInput({ ...userInput, [e.target.name]: e.target.value })
-  }
-
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
   return (
     <React.Fragment>
       <Button onClick={onOpen} size="md">
         Login
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Login</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <div
-              css={css`
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              `}
-            >
-              <form
-                action="#"
-                css={css`
-                  display: flex;
-                `}
-              >
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Username"
-                    name="username"
-                    onChange={handleChange}
-                    value={userInput.username}
-                  />
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    onChange={handleChange}
-                    value={userInput.password}
-                  />
-                </div>
-              </form>
-            </div>
-          </ModalBody>
+      <Formik
+        initialValues={{
+          username: "",
+          password: ""
+        }}
+        validationSchema={loginFormValidationSchema}
+        onSubmit={(values, { resetForm }) => {
+          onSubmitLogin(values, resetForm)
+        }}
+      >
+        {() => (
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <Form>
+              <ModalContent>
+                <ModalHeader>Login</ModalHeader>
+                <ModalCloseButton />
+                <Divider mb={15} />
+                <ModalBody>
+                  <Field name="username">
+                    {/* https://github.com/jaredpalmer/formik/issues/2086 */}
+                    {({ field, form }: any) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.username && form.touched.username
+                        }
+                        isRequired
+                        mb={15}
+                      >
+                        <FormLabel htmlFor="username">Username</FormLabel>
+                        <Input
+                          {...field}
+                          id="username"
+                          placeholder="username"
+                        />
+                        <FormErrorMessage>
+                          {form.errors.username}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <Field name="password">
+                    {({ field, form }: any) => (
+                      <FormControl
+                        isInvalid={
+                          form.errors.password && form.touched.password
+                        }
+                        isRequired
+                        mb={15}
+                      >
+                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <PasswordInput
+                          id={"password"}
+                          placeholder={"password"}
+                          field={field}
+                        />
+                        <FormErrorMessage>
+                          {form.errors.password}
+                        </FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
 
-          <ModalFooter>
-            <Button onClick={onSubmitClick} type="submit">
-              Login
-            </Button>
+                  {authError && (
+                    <Alert status="error">
+                      <AlertIcon />
+                      Invalid credentials. Please try again.
+                    </Alert>
+                  )}
+                </ModalBody>
 
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                <ModalFooter width="100%">
+                  <Button type="submit" colorScheme="blue" mr={5}>
+                    Login
+                  </Button>
+                  <Button onClick={onClose}>Cancel</Button>
+                </ModalFooter>
+              </ModalContent>
+            </Form>
+          </Modal>
+        )}
+      </Formik>
     </React.Fragment>
   )
 }

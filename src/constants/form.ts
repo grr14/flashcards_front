@@ -18,3 +18,8 @@ export const registerFormValidationSchema = yup.object({
     .required("Password confirmation is required")
     .oneOf([yup.ref("password"), null], "Passwords must match")
 })
+
+export const loginFormValidationSchema = yup.object({
+  username: yup.string().required("Username is required"),
+  password: yup.string().required("Password is required")
+})

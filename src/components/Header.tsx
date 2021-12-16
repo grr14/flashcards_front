@@ -1,6 +1,3 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
-
 import {
   Box,
   Button,
@@ -11,7 +8,6 @@ import {
   Spacer,
   Text
 } from "@chakra-ui/react"
-import { css, jsx } from "@emotion/react"
 import React from "react"
 import { logout, useAuth } from "../auth"
 import { HOME } from "../constants/routes"
@@ -22,9 +18,11 @@ const Header = () => {
   const [isLogged] = useAuth()
 
   return (
-    <Flex alignItems="center" m="5px 10px">
+    <Flex alignItems="center" p="5px 10px" backgroundColor="blue.700">
       <Box as="a" href={HOME} p="2">
-        <Heading size="2xl">flashcards</Heading>
+        <Heading size="2xl" color="gray.50">
+          flashcards
+        </Heading>
       </Box>
       <Spacer />
       {!isLogged ? (
