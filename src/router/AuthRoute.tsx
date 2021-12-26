@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom"
+import { LOGIN } from "../constants/routes"
 
 const RequireAuth = ({
   children,
@@ -10,7 +11,7 @@ const RequireAuth = ({
   let location = useLocation()
 
   if (!isLogged) {
-    return <Navigate to="/login" state={{ from: location }} />
+    return <Navigate to={LOGIN} state={{ from: location }} />
   }
 
   return children

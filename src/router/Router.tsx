@@ -5,8 +5,16 @@ import NeedLogin from "../components/NeedLogin"
 import Secret from "../components/Secret"
 import VerifyEmail from "../components/VerifyEmail"
 import RequireAuth from "./AuthRoute"
+import Profile from "../components/Profile"
+import { User } from "../common/types"
 
-const Router = ({ isLogged }: { isLogged: boolean }) => {
+const Router = ({
+  isLogged,
+  user
+}: {
+  isLogged: boolean
+  user: User | undefined
+}) => {
   return (
     <Routes>
       <Route path={routes.HOME} element={<Home />} />
@@ -15,6 +23,14 @@ const Router = ({ isLogged }: { isLogged: boolean }) => {
         element={
           <RequireAuth isLogged={isLogged}>
             <Secret />
+          </RequireAuth>
+        }
+      ></Route>
+      <Route
+        path={routes.PROFILE}
+        element={
+          <RequireAuth isLogged={user !== undefined}>
+            <Profile />
           </RequireAuth>
         }
       ></Route>

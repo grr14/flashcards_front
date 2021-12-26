@@ -23,9 +23,9 @@ export type LoginError = {
 export type Role = "admin" | "user"
 
 export type User = {
-  id: number
+  id?: number
   username: string
-  password: string
+  password?: string
   email?: string
   is_active?: boolean
   last_login?: Date
