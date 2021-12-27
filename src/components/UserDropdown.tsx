@@ -11,6 +11,7 @@ import {
   Box
 } from "@chakra-ui/react"
 import { Link as RouterLink } from "react-router-dom"
+import { PROFILE, SETTINGS } from "../constants/routes"
 
 const UserDropdown = ({ username }: { username: string | undefined }) => {
   return (
@@ -23,12 +24,14 @@ const UserDropdown = ({ username }: { username: string | undefined }) => {
         </HStack>
         <MenuDivider />
         <MenuItem display="flex">
-          <Box as={RouterLink} flex="1" to={{ pathname: "/profile" }}>
+          <Box as={RouterLink} flex="1" to={{ pathname: PROFILE }}>
             Profile
           </Box>
         </MenuItem>
-        <MenuItem as="a" href={"/settings"}>
-          Settings
+        <MenuItem>
+          <Box as={RouterLink} flex="1" to={{ pathname: SETTINGS }}>
+            Settings
+          </Box>
         </MenuItem>
       </MenuList>
     </Menu>

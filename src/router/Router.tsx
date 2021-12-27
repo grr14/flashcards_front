@@ -7,6 +7,7 @@ import VerifyEmail from "../components/VerifyEmail"
 import RequireAuth from "./AuthRoute"
 import Profile from "../components/Profile"
 import { User } from "../common/types"
+import { Settings, AccountDeleted } from "../components/Settings"
 
 const Router = ({
   isLogged,
@@ -34,8 +35,17 @@ const Router = ({
           </RequireAuth>
         }
       ></Route>
+      <Route
+        path={routes.SETTINGS}
+        element={
+          <RequireAuth isLogged={user !== undefined}>
+            <Settings />
+          </RequireAuth>
+        }
+      ></Route>
       <Route path={routes.LOGIN} element={<NeedLogin />} />
       <Route path={routes.VERIFY_EMAIL} element={<VerifyEmail />} />
+      <Route path={routes.ACCOUNT_DELETED} element={<AccountDeleted />} />
     </Routes>
   )
 }

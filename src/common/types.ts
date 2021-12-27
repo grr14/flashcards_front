@@ -1,5 +1,3 @@
-import { StringMappingType } from "typescript"
-
 export type Only<T, U> = {
   [P in keyof T]: T[P]
 } & {
@@ -43,4 +41,15 @@ export type RegisterFormValues = {
 export type LoginFormValues = {
   username: string
   password: string
+}
+
+export type ChangeEmailFormValues = {
+  newEmail: string
+  newEmailConfirmation: string
+}
+
+export type ChangePasswordFormValues = {
+  oldPassword: string
+  newPassword: string
+  newPasswordConfirmation: string
 }

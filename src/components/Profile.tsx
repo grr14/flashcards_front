@@ -1,7 +1,9 @@
 import {
   Avatar,
   Box,
+  Button,
   Center,
+  Container,
   Flex,
   Heading,
   Skeleton,
@@ -9,8 +11,10 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 import { useQuery } from "react-query"
+import { Link } from "react-router-dom"
 import { authFetch } from "../auth"
 import { User } from "../common/types"
+import { SETTINGS } from "../constants/routes"
 
 const Profile = () => {
   const { data: user, isLoading } = useQuery<User, Error>(
@@ -68,9 +72,15 @@ const Profile = () => {
   }
 
   return (
-    <Box display="flex" flex="1" margin="2">
-      <Flex flex="1">
-        <Box backgroundColor="gray.300" padding="2" w="300px" borderRadius="xl">
+    <Flex flex="1" margin="2">
+      <Flex
+        direction="column"
+        backgroundColor="gray.300"
+        padding="2"
+        borderRadius="xl"
+        justify="space-between"
+      >
+        <Box>
           <Center mb="15px">
             <Avatar size="2xl" />
           </Center>
@@ -99,13 +109,43 @@ const Profile = () => {
             </Text>
           </Text>
         </Box>
-        <Box flex="1" backgroundColor="blue.50" display="flex">
-          <Box flex="1" border="solid 1px black" ml="10px">
-            <Heading>My decks</Heading>
-          </Box>
+
+        <Box as={Link} to={{ pathname: SETTINGS }} alignSelf="center" mb="15px">
+          <Button>Edit my profile</Button>
         </Box>
       </Flex>
-    </Box>
+      <Box flex="1" backgroundColor="blue.50" display="flex">
+        <Box flex="1" border="solid 1px black" ml="10px">
+          <Heading>Bio</Heading>
+          <Container maxW="container.xl">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+            tempus dignissim sem nec imperdiet. Pellentesque sem turpis, feugiat
+            finibus semper at, tempus quis odio. Mauris sagittis mi quis varius
+            rutrum. Nam id lorem pharetra, viverra diam a, venenatis lectus.
+            Pellentesque sed laoreet nisi. Donec ut libero eu ex rhoncus
+            tincidunt et nec mi. Donec ut ante et eros viverra ullamcorper ac
+            eget enim. Phasellus elementum felis sed ligula viverra blandit.
+            Morbi vel leo id elit suscipit mollis. Praesent tincidunt
+            consectetur rhoncus. Curabitur in sapien vel dui posuere dapibus.
+            Nullam ligula ligula, pharetra ornare mi a, lacinia ultrices velit.
+            Sed nec sem ornare arcu ornare fermentum. Ut ut pellentesque lorem.
+            Integer scelerisque efficitur lectus, non malesuada arcu commodo
+            sed. Orci varius natoque penatibus et magnis dis parturient montes,
+            nascetur ridiculus mus. Cras rhoncus iaculis est at dignissim.
+            Integer dictum lobortis tortor, sit amet mattis ligula volutpat at.
+            Pellentesque ac rutrum lorem. Cras ut lobortis eros. In malesuada
+            vitae diam quis porta. Etiam sagittis convallis quam, quis porttitor
+            odio tempus eget. Aliquam rhoncus viverra mattis. In dictum enim sed
+            dui mollis venenatis. Vestibulum sit amet dolor est. Suspendisse
+            pharetra ac erat sed volutpat. Nam in turpis eget mauris convallis
+            vulputate. Vestibulum porttitor feugiat felis in pretium. Donec sed
+            tincidunt neque. Nulla rutrum tempor enim. Sed diam massa, malesuada
+            vitae maximus a, tristique et erat.
+          </Container>
+          <Heading>My decks</Heading>
+        </Box>
+      </Box>
+    </Flex>
   )
 }
 

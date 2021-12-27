@@ -7,10 +7,8 @@ import {
   HStack,
   Spacer
 } from "@chakra-ui/react"
-import { useQuery } from "react-query"
 import { useNavigate } from "react-router"
-import { authFetch, logout, useAuth } from "../auth"
-import { User } from "../common/types"
+import { logout, useAuth } from "../auth"
 import { HOME } from "../constants/routes"
 import LoginForm from "./LoginForm"
 import RegisterForm from "./RegisterForm"
