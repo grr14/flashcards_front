@@ -29,6 +29,7 @@ export type User = {
   last_login?: Date
   date_joined?: Date
   roles?: Role
+  biography?: string
 }
 
 export type RegisterFormValues = {
@@ -52,4 +53,8 @@ export type ChangePasswordFormValues = {
   oldPassword: string
   newPassword: string
   newPasswordConfirmation: string
+}
+
+export type BiographyFormValues = {
+  biography: string
 }

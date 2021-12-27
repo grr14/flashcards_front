@@ -5,30 +5,41 @@ import {
   Center,
   Container,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
+  Input,
   Skeleton,
-  Text
+  Text,
+  Textarea
 } from "@chakra-ui/react"
+import { Field, Form, Formik, FormikState } from "formik"
 import React from "react"
-import { useQuery } from "react-query"
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  useQuery
+} from "react-query"
 import { Link } from "react-router-dom"
 import { authFetch } from "../auth"
-import { User } from "../common/types"
+import { BiographyFormValues, User } from "../common/types"
+import {
+  biographyFormValidationSchema,
+  registerFormValidationSchema
+} from "../constants/form"
 import { SETTINGS } from "../constants/routes"
 
 const Profile = () => {
-  const { data: user, isLoading } = useQuery<User, Error>(
-    "getUsername",
-    async () => {
-      return await (await authFetch("/api/me")).json()
-    }
-  )
+  const {
+    data: user,
+    isLoading,
+    refetch
+  } = useQuery<User, Error>("getUsername", async () => {
+    return await (await authFetch("/api/me")).json()
+  })
 
-  if (user === undefined) {
-    return <p>YAONG</p>
-  }
-
-  const test = true
   if (isLoading) {
     return (
       <Box display="flex" flex="1" margin="2">
@@ -111,41 +122,108 @@ const Profile = () => {
         </Box>
 
         <Box as={Link} to={{ pathname: SETTINGS }} alignSelf="center" mb="15px">
-          <Button>Edit my profile</Button>
+          <Button>Edit my settings</Button>
         </Box>
       </Flex>
       <Box flex="1" backgroundColor="blue.50" display="flex">
-        <Box flex="1" border="solid 1px black" ml="10px">
-          <Heading>Bio</Heading>
-          <Container maxW="container.xl">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-            tempus dignissim sem nec imperdiet. Pellentesque sem turpis, feugiat
-            finibus semper at, tempus quis odio. Mauris sagittis mi quis varius
-            rutrum. Nam id lorem pharetra, viverra diam a, venenatis lectus.
-            Pellentesque sed laoreet nisi. Donec ut libero eu ex rhoncus
-            tincidunt et nec mi. Donec ut ante et eros viverra ullamcorper ac
-            eget enim. Phasellus elementum felis sed ligula viverra blandit.
-            Morbi vel leo id elit suscipit mollis. Praesent tincidunt
-            consectetur rhoncus. Curabitur in sapien vel dui posuere dapibus.
-            Nullam ligula ligula, pharetra ornare mi a, lacinia ultrices velit.
-            Sed nec sem ornare arcu ornare fermentum. Ut ut pellentesque lorem.
-            Integer scelerisque efficitur lectus, non malesuada arcu commodo
-            sed. Orci varius natoque penatibus et magnis dis parturient montes,
-            nascetur ridiculus mus. Cras rhoncus iaculis est at dignissim.
-            Integer dictum lobortis tortor, sit amet mattis ligula volutpat at.
-            Pellentesque ac rutrum lorem. Cras ut lobortis eros. In malesuada
-            vitae diam quis porta. Etiam sagittis convallis quam, quis porttitor
-            odio tempus eget. Aliquam rhoncus viverra mattis. In dictum enim sed
-            dui mollis venenatis. Vestibulum sit amet dolor est. Suspendisse
-            pharetra ac erat sed volutpat. Nam in turpis eget mauris convallis
-            vulputate. Vestibulum porttitor feugiat felis in pretium. Donec sed
-            tincidunt neque. Nulla rutrum tempor enim. Sed diam massa, malesuada
-            vitae maximus a, tristique et erat.
-          </Container>
-          <Heading>My decks</Heading>
+        <Box flex="1" ml="10px" display="flex" flexDirection="column">
+          <Biography
+            username={user?.username}
+            biography={user?.biography}
+            refetch={refetch}
+          />
+          <Box
+            border="solid 1px black"
+            borderRadius="xl"
+            p="10px"
+            mb="10px"
+            backgroundColor="yellow.100"
+            flex="1"
+          >
+            <Heading>My decks</Heading>
+          </Box>
         </Box>
       </Box>
     </Flex>
+  )
+}
+
+interface BiographyProps {
+  username: string | undefined
+  biography: string | undefined
+  refetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<User, Error>>
+}
+
+const Biography = ({ username, biography, refetch }: BiographyProps) => {
+  const onSubmitBiography = async (
+    values: BiographyFormValues,
+    resetForm: (
+      nextState?: Partial<FormikState<BiographyFormValues>> | undefined
+    ) => void
+  ) => {
+    const { biography } = values
+    const response = await fetch(`/api/biography`, {
+      method: "put",
+      body: JSON.stringify({
+        username,
+        biography
+      })
+    })
+
+    if (response.ok) {
+      resetForm()
+      refetch()
+    }
+  }
+  return (
+    <Box
+      border="solid 1px black"
+      borderRadius="xl"
+      p="10px"
+      mb="10px"
+      backgroundColor="yellow.100"
+    >
+      <Heading>Biography</Heading>
+      <Container maxW="container.xl" p="5px" mb="10px">
+        {biography ||
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus dignissim sem nec imperdiet. Pellentesque sem turpis, feugiat finibus semper at, tempus quis odio. Mauris sagittis mi quis varius rutrum. Nam id lorem pharetra, viverra diam a, venenatis lectus. Pellentesque sed laoreet nisi. Donec ut libero eu ex rhoncus tincidunt et nec mi. Donec ut ante et eros viverra ullamcorper ac eget enim. Phasellus elementum felis sed ligula viverra blandit. Morbi vel leo id elit suscipit mollis. Praesent tincidunt consectetur rhoncus. Curabitur in sapien vel dui posuere dapibus. Nullam ligula ligula, pharetra ornare mi a, lacinia ultrices velit. Sed nec sem ornare arcu ornare fermentum. Ut ut pellentesque lorem. Integer scelerisque efficitur lectus, non malesuada arcu commodo sed. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Cras rhoncus iaculis est at dignissim. Integer dictum lobortis tortor, sit amet mattis ligula volutpat at. Pellentesque ac rutrum lorem. Cras ut lobortis eros. In malesuada vitae diam quis porta. Etiam sagittis convallis quam, quis porttitor odio tempus eget. Aliquam rhoncus viverra mattis. In dictum enim sed dui mollis venenatis. Vestibulum sit amet dolor est. Suspendisse pharetra ac erat sed volutpat. Nam in turpis eget mauris convallis vulputate. Vestibulum porttitor feugiat felis in pretium. Donec sed tincidunt neque. Nulla rutrum tempor enim. Sed diam massa, malesuada vitae maximus a, tristique et erat."}
+      </Container>
+      <Formik
+        initialValues={{ biography: "" }}
+        validationSchema={biographyFormValidationSchema}
+        onSubmit={(values, { resetForm }) => {
+          onSubmitBiography(values, resetForm)
+        }}
+      >
+        {() => (
+          <Form>
+            <Field name="biography">
+              {({ field, form }: any) => (
+                <FormControl
+                  isInvalid={form.errors.biography && form.touched.biography}
+                  mb={15}
+                >
+                  <FormLabel htmlFor="biography">Edit my biography</FormLabel>
+                  <Textarea
+                    {...field}
+                    id="biography"
+                    placeholder="Tell us about yourself..."
+                    backgroundColor="white"
+                  />
+                  <FormErrorMessage>{form.errors.biography}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+
+            <Button type="submit" colorScheme="blue" mr={5}>
+              Save changes
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    </Box>
   )
 }
 

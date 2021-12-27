@@ -47,3 +47,7 @@ export const changePasswordFormValidationSchema = yup.object({
     .required("Password confirmation is required")
     .oneOf([yup.ref("newPassword"), null], "New passwords must match")
 })
+
+export const biographyFormValidationSchema = yup.object({
+  biography: yup.string().max(2000, "Maximum 2000 caracters")
+})
