@@ -3,13 +3,11 @@ import {
   Box,
   Button,
   Center,
-  Container,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
-  Input,
   Skeleton,
   Text,
   Textarea
@@ -25,10 +23,7 @@ import {
 import { Link } from "react-router-dom"
 import { authFetch } from "../auth"
 import { BiographyFormValues, User } from "../common/types"
-import {
-  biographyFormValidationSchema,
-  registerFormValidationSchema
-} from "../constants/form"
+import { biographyFormValidationSchema } from "../constants/form"
 import { SETTINGS } from "../constants/routes"
 
 const Profile = () => {
@@ -72,7 +67,7 @@ const Profile = () => {
               )
             )}
           </Box>
-          <Box flex="1" backgroundColor="blue.50" display="flex">
+          <Box flex="1" backgroundColor="gray.50" display="flex">
             <Box flex="1" border="solid 1px black" ml="10px">
               <Heading>My decks</Heading>
             </Box>
@@ -122,10 +117,10 @@ const Profile = () => {
         </Box>
 
         <Box as={Link} to={{ pathname: SETTINGS }} alignSelf="center" mb="15px">
-          <Button>Edit my settings</Button>
+          <Button colorScheme="blue">Edit my settings</Button>
         </Box>
       </Flex>
-      <Box flex="1" backgroundColor="blue.50" display="flex">
+      <Box flex="1" backgroundColor="gray.50" display="flex">
         <Box flex="1" ml="10px" display="flex" flexDirection="column">
           <Biography
             username={user?.username}
@@ -136,8 +131,7 @@ const Profile = () => {
             border="solid 1px black"
             borderRadius="xl"
             p="10px"
-            mb="10px"
-            backgroundColor="yellow.100"
+            backgroundColor="gray.100"
             flex="1"
           >
             <Heading>My decks</Heading>
@@ -183,7 +177,7 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
       borderRadius="xl"
       p="10px"
       mb="10px"
-      backgroundColor="yellow.100"
+      backgroundColor="gray.100"
     >
       <Heading>Biography</Heading>
       <Box p="5px 0" mb="10px">

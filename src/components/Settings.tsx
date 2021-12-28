@@ -53,7 +53,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.100"
+          backgroundColor="gray.100"
           p="10px"
         >
           <ChangeEmail
@@ -65,7 +65,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.100"
+          backgroundColor="gray.100"
           p="10px"
           mt="10px"
         >
@@ -75,7 +75,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.100"
+          backgroundColor="gray.100"
           p="10px"
           mt="10px"
         >

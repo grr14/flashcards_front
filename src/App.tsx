@@ -20,7 +20,7 @@ const App = () => {
     <BrowserRouter>
       <Flex direction="column" flex="1">
         <Header username={user?.username} />
-        <Box bg="blue.50" flex="1" display="flex">
+        <Box bg="gray.50" flex="1" display="flex">
           {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
           <Router isLogged={isLogged} user={user} />
