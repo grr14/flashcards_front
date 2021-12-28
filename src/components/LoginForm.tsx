@@ -16,20 +16,19 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  Alert,
-  AlertIcon
+  useToast
 } from "@chakra-ui/react"
 import { Either, Session, LoginError, LoginFormValues } from "../common/types"
 import { SECRET } from "../constants/routes"
 import { Field, Form, Formik, FormikState } from "formik"
 import PasswordInput from "./PasswordInput"
 import { loginFormValidationSchema } from "../constants/form"
+import HttpStatusCode from "../constants/httpStatusCode"
 
 const LoginForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const toast = useToast()
   const navigate = useNavigate()
-  const [authError, setAuthError] = React.useState<boolean>(false)
 
   const onSubmitLogin = async (
     values: LoginFormValues,
@@ -48,19 +47,22 @@ const LoginForm = () => {
 
     const data: Either<Session, LoginError> = await response.json()
     if (response.ok) {
-      setAuthError(false)
-      if (data.access_token) {
-        setAuthError(false)
+      if (data?.access_token) {
         login(data)
         onClose()
         resetForm()
         navigate(SECRET)
       } else {
-        console.log("error")
+        alert("error")
       }
-    } else {
-      setAuthError(true)
-      console.log(`error = ${JSON.stringify(data)}`)
+    } else if (response.status === HttpStatusCode.UNAUTHORIZED) {
+      toast({
+        title: "Error",
+        description: data?.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
     }
   }
 
@@ -132,13 +134,6 @@ const LoginForm = () => {
                       </FormControl>
                     )}
                   </Field>
-
-                  {authError && (
-                    <Alert status="error">
-                      <AlertIcon />
-                      Invalid credentials. Please try again.
-                    </Alert>
-                  )}
                 </ModalBody>
 
                 <ModalFooter width="100%">

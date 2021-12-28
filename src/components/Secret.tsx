@@ -1,5 +1,6 @@
 import React from "react"
 import { authFetch } from "../auth"
+import HttpStatusCode from "../constants/httpStatusCode"
 
 const Secret = () => {
   const [message, setMessage] = React.useState("")
@@ -7,7 +8,7 @@ const Secret = () => {
   React.useEffect(() => {
     authFetch("/api/protected")
       .then((response) => {
-        if (response.status === 401) {
+        if (response.status === HttpStatusCode.UNAUTHORIZED) {
           setMessage("Sorry you aren't authorized!")
           return
         }

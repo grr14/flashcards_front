@@ -35,6 +35,7 @@ import {
   changeEmailFormValidationSchema,
   changePasswordFormValidationSchema
 } from "../constants/form"
+import HttpStatusCode from "../constants/httpStatusCode"
 import { ACCOUNT_DELETED } from "../constants/routes"
 import PasswordInput from "./PasswordInput"
 
@@ -52,7 +53,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.300"
+          backgroundColor="yellow.100"
           p="10px"
         >
           <ChangeEmail
@@ -64,7 +65,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.300"
+          backgroundColor="yellow.100"
           p="10px"
           mt="10px"
         >
@@ -74,7 +75,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="yellow.300"
+          backgroundColor="yellow.100"
           p="10px"
           mt="10px"
         >
@@ -216,7 +217,7 @@ const ChangePassword = ({ username }: ChangePasswordProps) => {
       })
     })
     const data = await response.json()
-    if (response.status === 400) {
+    if (response.status === HttpStatusCode.BAD_REQUEST) {
       toast({
         title: "Error",
         description: data.message,
@@ -338,7 +339,7 @@ const DeleteAccount = ({ username }: { username: string | undefined }) => {
       method: "delete"
     })
     const data = await response.json()
-    if (response.status === 400) {
+    if (response.status === HttpStatusCode.BAD_REQUEST) {
       toast({
         title: "Error",
         description: data.message,

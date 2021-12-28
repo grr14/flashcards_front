@@ -14,7 +14,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  toast,
+  useDisclosure,
+  useToast
 } from "@chakra-ui/react"
 import { Field, Form, Formik, FormikState } from "formik"
 import { useNavigate } from "react-router"
@@ -22,11 +24,13 @@ import { VERIFY_EMAIL } from "../constants/routes"
 import { RegisterFormValues } from "../common/types"
 import { registerFormValidationSchema } from "../constants/form"
 import PasswordInput from "./PasswordInput"
+import HttpStatusCode from "../constants/httpStatusCode"
 
 const RegisterForm = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const initialRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
+  const toast = useToast()
 
   const onSubmitRegister = async (
     values: RegisterFormValues,
@@ -45,12 +49,18 @@ const RegisterForm = () => {
     })
 
     const data = await response.json()
-    if (response.status === 200) {
+    if (response.status === HttpStatusCode.OK) {
       onClose()
       resetForm()
       navigate(VERIFY_EMAIL)
-    } else {
-      alert(`message = ${data.message}`)
+    } else if (response.status === HttpStatusCode.BAD_REQUEST) {
+      toast({
+        title: "Error",
+        description: data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
     }
   }
 

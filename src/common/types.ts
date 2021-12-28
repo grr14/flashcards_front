@@ -14,7 +14,6 @@ export type Session = {
   refresh_token?: RefreshToken
 }
 export type LoginError = {
-  error: String
   message: string
   status_code: number
 }
