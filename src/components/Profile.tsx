@@ -10,7 +10,8 @@ import {
   Heading,
   Skeleton,
   Text,
-  Textarea
+  Textarea,
+  TextareaProps
 } from "@chakra-ui/react"
 import { Field, Form, Formik, FormikState } from "formik"
 import React from "react"
@@ -25,6 +26,7 @@ import { authFetch } from "../auth"
 import { BiographyFormValues, User } from "../common/types"
 import { biographyFormValidationSchema } from "../constants/form"
 import { SETTINGS } from "../constants/routes"
+import ResizeTextarea from "react-textarea-autosize"
 
 const Profile = () => {
   const {
@@ -146,6 +148,22 @@ interface BiographyProps {
 }
 
 const Biography = ({ username, biography, refetch }: BiographyProps) => {
+  const AutoResizeTextarea = React.forwardRef<
+    HTMLTextAreaElement,
+    TextareaProps
+  >((props, ref) => (
+    <Textarea
+      minH="unset"
+      overflow="hidden"
+      w="100%"
+      resize="none"
+      ref={ref}
+      minRows={1}
+      as={ResizeTextarea}
+      {...props}
+    />
+  ))
+
   const onSubmitBiography = async (
     values: BiographyFormValues,
     resetForm: (
@@ -197,7 +215,7 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
                   mb={15}
                 >
                   <FormLabel htmlFor="biography">Edit my biography</FormLabel>
-                  <Textarea
+                  <AutoResizeTextarea
                     {...field}
                     id="biography"
                     placeholder="Tell us about yourself..."
