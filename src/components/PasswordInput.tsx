@@ -23,6 +23,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   return (
     <InputGroup size="md">
       <Input
+        bg="white"
         type={isPasswordVisible ? "text" : "password"}
         id={id}
         placeholder={placeholder}

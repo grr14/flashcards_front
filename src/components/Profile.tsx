@@ -37,14 +37,9 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <Box display="flex" flex="1" margin="2">
+      <Box display="flex" flex="1" m="2">
         <Flex flex="1">
-          <Box
-            backgroundColor="gray.300"
-            padding="2"
-            w="300px"
-            borderRadius="xl"
-          >
+          <Box bg="gray.300" p="2" w="300px" borderRadius="xl">
             <Center mb="15px">
               <Avatar size="2xl" />
             </Center>
@@ -67,7 +62,7 @@ const Profile = () => {
               )
             )}
           </Box>
-          <Box flex="1" backgroundColor="gray.50" display="flex">
+          <Box flex="1" bg="gray.50" display="flex">
             <Box flex="1" border="solid 1px black" ml="10px">
               <Heading>My decks</Heading>
             </Box>
@@ -78,11 +73,11 @@ const Profile = () => {
   }
 
   return (
-    <Flex flex="1" margin="2">
+    <Flex flex="1" m="2">
       <Flex
         direction="column"
-        backgroundColor="gray.300"
-        padding="2"
+        bg="gray.300"
+        p="2"
         borderRadius="xl"
         justify="space-between"
       >
@@ -120,7 +115,7 @@ const Profile = () => {
           <Button colorScheme="blue">Edit my settings</Button>
         </Box>
       </Flex>
-      <Box flex="1" backgroundColor="gray.50" display="flex">
+      <Box flex="1" bg="gray.50" display="flex">
         <Box flex="1" ml="10px" display="flex" flexDirection="column">
           <Biography
             username={user?.username}
@@ -131,7 +126,7 @@ const Profile = () => {
             border="solid 1px black"
             borderRadius="xl"
             p="10px"
-            backgroundColor="gray.100"
+            bg="gray.100"
             flex="1"
           >
             <Heading>My decks</Heading>
@@ -177,7 +172,7 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
       borderRadius="xl"
       p="10px"
       mb="10px"
-      backgroundColor="gray.100"
+      bg="gray.100"
     >
       <Heading>Biography</Heading>
       <Box p="5px 0" mb="10px">
@@ -206,7 +201,7 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
                     {...field}
                     id="biography"
                     placeholder="Tell us about yourself..."
-                    backgroundColor="white"
+                    bg="white"
                   />
                   <FormErrorMessage>{form.errors.biography}</FormErrorMessage>
                 </FormControl>

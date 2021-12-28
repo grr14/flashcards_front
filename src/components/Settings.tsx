@@ -48,14 +48,9 @@ const Settings = () => {
   )
 
   return (
-    <Flex flex="1" margin="2">
+    <Flex flex="1" m="2">
       <Flex direction="column">
-        <Box
-          border="solid 1px black"
-          borderRadius="2xl"
-          backgroundColor="gray.100"
-          p="10px"
-        >
+        <Box border="solid 1px black" borderRadius="2xl" bg="gray.100" p="10px">
           <ChangeEmail
             username={user?.username}
             email={user?.email}
@@ -65,7 +60,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="gray.100"
+          bg="gray.100"
           p="10px"
           mt="10px"
         >
@@ -75,7 +70,7 @@ const Settings = () => {
         <Box
           border="solid 1px black"
           borderRadius="2xl"
-          backgroundColor="gray.100"
+          bg="gray.100"
           p="10px"
           mt="10px"
         >
@@ -154,7 +149,12 @@ const ChangeEmail = ({ username, email, refetch }: ChangeEmailProps) => {
                   mb={15}
                 >
                   <FormLabel htmlFor="newEmail">new Email</FormLabel>
-                  <Input {...field} id="newEmail" placeholder="newEmail" />
+                  <Input
+                    bg="white"
+                    {...field}
+                    id="newEmail"
+                    placeholder="newEmail"
+                  />
                   <FormErrorMessage>{form.errors.newEmail}</FormErrorMessage>
                 </FormControl>
               )}
@@ -173,6 +173,7 @@ const ChangeEmail = ({ username, email, refetch }: ChangeEmailProps) => {
                     confirm the new Email
                   </FormLabel>
                   <Input
+                    bg="white"
                     {...field}
                     id="newEmailConfirmation"
                     placeholder="newEmailConfirmation"
@@ -395,7 +396,7 @@ const DeleteAccount = ({ username }: { username: string | undefined }) => {
 
 const AccountDeleted = () => {
   return (
-    <Flex flex="1" margin="2">
+    <Flex flex="1" m="2">
       <Flex direction="column" flex="1" justify="center" align="center">
         <Heading>Account deleted</Heading>
         <Text>We have successfully deleted your account.</Text>

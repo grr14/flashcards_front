@@ -59,7 +59,7 @@ const Home = () => {
           process is the following:
         </Text>
         <Box alignSelf="center">
-          <Image src="/homelogo-light.png" alt="homepagelogo" />
+          <Image mt="10px" src="/homelogo-light.png" alt="homepagelogo" />
         </Box>
       </Box>
       <Box
