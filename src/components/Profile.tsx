@@ -8,7 +8,10 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  HStack,
+  Input,
   Skeleton,
+  Spacer,
   Text,
   Textarea,
   TextareaProps
@@ -28,6 +31,7 @@ import { biographyFormValidationSchema } from "../constants/form"
 import { DECK, SETTINGS } from "../constants/routes"
 import ResizeTextarea from "react-textarea-autosize"
 import HttpStatusCode from "../constants/httpStatusCode"
+import { AddIcon, SettingsIcon } from "@chakra-ui/icons"
 
 const Profile = () => {
   const {
@@ -115,7 +119,9 @@ const Profile = () => {
         </Box>
 
         <Box as={Link} to={{ pathname: SETTINGS }} alignSelf="center" mb="15px">
-          <Button colorScheme="blue">Edit my settings</Button>
+          <Button leftIcon={<SettingsIcon />} colorScheme="blue">
+            Edit my settings
+          </Button>
         </Box>
       </Flex>
       <Box flex="1" bg="gray.50" display="flex">
@@ -253,7 +259,39 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
   )
 
   if (isLoading) {
-    return <p>Loading....</p>
+    return (
+      <Flex wrap="wrap">
+        {[...Array(5).keys()].map((el) => (
+          <Box
+            key={el}
+            bgGradient="linear(to-tr, blue.200, blue.400)"
+            border="solid 1px black"
+            rounded="xl"
+            p="10px"
+            m="5px"
+            w="375px"
+            _hover={{
+              bgGradient: "linear(to-tr, blue.300, blue.500)",
+              boxShadow: "xl"
+            }}
+          >
+            <Skeleton w="200px" h="30px" mb="5px" />
+            <HStack>
+              <b>Category:</b>
+              <Skeleton w="75px" h="15px" />
+            </HStack>
+
+            <HStack>
+              <Text>Deck size:</Text> <Skeleton w="75px" h="15px" />
+            </HStack>
+
+            <HStack>
+              <i>Last updated on</i> <Skeleton w="75px" h="15px" />
+            </HStack>
+          </Box>
+        ))}
+      </Flex>
+    )
   }
 
   if (isError) {
@@ -262,13 +300,28 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
 
   return (
     <>
-      <Heading>My decks</Heading>
+      <HStack mb="15px">
+        <Flex justifyContent="center" alignItems="center">
+          <Heading>My decks</Heading>
+          <Button ml="20px" colorScheme="blue" leftIcon={<AddIcon />}>
+            Create New Deck
+          </Button>
+        </Flex>
+
+        <Spacer />
+
+        <Input
+          bg="white"
+          w="275px"
+          placeholder="Search decks by name or category"
+        />
+      </HStack>
+
       <Flex wrap="wrap">
         {data?.decks.map((deck, idx) => {
           return (
-            <Link to={{ pathname: `${DECK}/${deck.id}` }}>
+            <Link key={idx} to={{ pathname: `${DECK}/${deck.id}` }}>
               <Box
-                key={idx}
                 bgGradient="linear(to-tr, blue.200, blue.400)"
                 border="solid 1px black"
                 rounded="xl"
