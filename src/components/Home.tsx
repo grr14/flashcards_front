@@ -10,8 +10,8 @@ import {
 
 const Home = () => {
   return (
-    <Flex flex="1" direction="column" margin="2" justifyContent="space-evenly">
-      <Box p="10px" margin="10px 0" fontSize="2xl">
+    <Flex flex="1" direction="column" m="2" justifyContent="space-evenly">
+      <Box p="10px" m="10px 0" fontSize="2xl">
         <Heading size="3xl" mb="10px">
           Welcome on my flashcards app!
         </Heading>
@@ -24,9 +24,9 @@ const Home = () => {
       <Box
         p="10px"
         border="solid 1px black"
-        backgroundColor="gray.100"
+        bg="gray.100"
         borderRadius="2xl"
-        margin="10px 0"
+        m="10px 0"
       >
         <Text fontSize="larger">
           <b>
@@ -43,9 +43,9 @@ const Home = () => {
       <Box
         p="10px"
         border="solid 1px black"
-        backgroundColor="gray.100"
+        bg="gray.100"
         borderRadius="2xl"
-        margin="10px 0"
+        m="10px 0"
         display="flex"
         flexDirection="column"
       >
@@ -65,9 +65,9 @@ const Home = () => {
       <Box
         p="10px"
         border="solid 1px black"
-        backgroundColor="gray.100"
+        bg="gray.100"
         borderRadius="2xl"
-        margin="10px 0"
+        m="10px 0"
       >
         <Text fontSize="larger">
           <b>

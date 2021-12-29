@@ -24,7 +24,7 @@ const Header = ({ username }: HeaderProps) => {
   const navigate = useNavigate()
 
   return (
-    <Flex alignItems="center" p="5px 10px" backgroundColor="blue.700">
+    <Flex alignItems="center" p="5px 10px" bg="blue.700">
       <Box as="a" href={HOME} p="2">
         <Heading size="2xl" color="gray.50">
           flashcards - {isLogged.toString()}
@@ -39,7 +39,14 @@ const Header = ({ username }: HeaderProps) => {
       ) : (
         <HStack>
           <UserDropdown username={username} />
-          <Button onClick={() => (logout(), navigate(HOME))}>Logout</Button>
+          <Button
+            onClick={() => {
+              logout()
+              navigate(HOME)
+            }}
+          >
+            Logout
+          </Button>
         </HStack>
       )}
     </Flex>

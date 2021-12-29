@@ -20,7 +20,7 @@ export type LoginError = {
 export type Role = "admin" | "user"
 
 export type User = {
-  id?: number
+  id: number
   username: string
   password?: string
   email?: string
@@ -56,4 +56,26 @@ export type ChangePasswordFormValues = {
 
 export type BiographyFormValues = {
   biography: string
+}
+
+export type Card = {
+  id: string
+  front: string
+  back: string
+}
+
+export type Deck = {
+  id: number
+  creatorId: number
+  name: string
+  theme?: string
+  is_public: boolean
+  created_at?: Date
+  updated_at?: Date
+  cards?: Card[]
+}
+
+export type AllDecks = {
+  count: number
+  decks: Deck[]
 }

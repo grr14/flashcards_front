@@ -23,10 +23,11 @@ import {
 } from "react-query"
 import { Link } from "react-router-dom"
 import { authFetch } from "../auth"
-import { BiographyFormValues, User } from "../common/types"
+import { AllDecks, BiographyFormValues, User } from "../common/types"
 import { biographyFormValidationSchema } from "../constants/form"
-import { SETTINGS } from "../constants/routes"
+import { DECK, SETTINGS } from "../constants/routes"
 import ResizeTextarea from "react-textarea-autosize"
+import HttpStatusCode from "../constants/httpStatusCode"
 
 const Profile = () => {
   const {
@@ -131,7 +132,7 @@ const Profile = () => {
             bg="gray.100"
             flex="1"
           >
-            <Heading>My decks</Heading>
+            <UserDecks userId={user?.id} />
           </Box>
         </Box>
       </Box>
@@ -233,6 +234,71 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
         )}
       </Formik>
     </Box>
+  )
+}
+
+const UserDecks = ({ userId }: { userId: number | undefined }) => {
+  console.log(`userID = ${userId}`)
+
+  const { data, isLoading, isError } = useQuery<AllDecks, Error>(
+    "getAllUserDecks",
+    async () => {
+      const response = await fetch(`/deck/get_all/${userId}`)
+      const data = await response.json()
+      if (response.status === HttpStatusCode.OK) {
+        console.log(`response=${JSON.stringify(response)}`)
+      }
+      return data
+    }
+  )
+
+  if (isLoading) {
+    return <p>Loading....</p>
+  }
+
+  if (isError) {
+    return <p>fichtre</p>
+  }
+
+  return (
+    <>
+      <Heading>My decks</Heading>
+      <Flex wrap="wrap">
+        {data?.decks.map((deck, idx) => {
+          return (
+            <Link to={{ pathname: `${DECK}/${deck.id}` }}>
+              <Box
+                key={idx}
+                bgGradient="linear(to-tr, blue.200, blue.400)"
+                border="solid 1px black"
+                rounded="xl"
+                p="10px"
+                m="5px"
+                _hover={{
+                  bgGradient: "linear(to-tr, blue.300, blue.500)",
+                  cursor: "pointer",
+                  boxShadow: "xl"
+                }}
+              >
+                <Heading size="lg">{deck.name}</Heading>
+                <Text>
+                  <b>Category: </b>
+                  {deck.theme}
+                </Text>
+                {deck.cards?.length && deck.cards?.length > 0 ? (
+                  <Text>Deck size: {deck.cards?.length} card</Text>
+                ) : (
+                  <Text>This deck is empty.</Text>
+                )}
+                <Text>
+                  <i>Last updated on {deck.updated_at}</i>
+                </Text>
+              </Box>
+            </Link>
+          )
+        })}
+      </Flex>
+    </>
   )
 }
 

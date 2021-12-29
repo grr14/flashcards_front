@@ -14,7 +14,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  toast,
   useDisclosure,
   useToast
 } from "@chakra-ui/react"

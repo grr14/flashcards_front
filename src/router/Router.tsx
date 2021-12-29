@@ -8,6 +8,7 @@ import RequireAuth from "./AuthRoute"
 import Profile from "../components/Profile"
 import { User } from "../common/types"
 import { Settings, AccountDeleted } from "../components/Settings"
+import Deck from "../components/Deck"
 
 const Router = ({
   isLogged,
@@ -46,6 +47,7 @@ const Router = ({
       <Route path={routes.LOGIN} element={<NeedLogin />} />
       <Route path={routes.VERIFY_EMAIL} element={<VerifyEmail />} />
       <Route path={routes.ACCOUNT_DELETED} element={<AccountDeleted />} />
+      <Route path={`${routes.DECK}/:id`} element={<Deck />} />
     </Routes>
   )
 }
