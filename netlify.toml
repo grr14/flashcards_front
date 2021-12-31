@@ -9,3 +9,9 @@
   to = "https://flashcardsbackend.herokuapp.com/deck/:splat"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/card/*"
+  to = "https://flashcardsbackend.herokuapp.com/deck/:splat"
+  status = 200
+  force = true
