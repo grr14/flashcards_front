@@ -62,6 +62,8 @@ export type Card = {
   id: string
   front: string
   back: string
+  review: number
+  is_active: boolean
 }
 
 export type Deck = {

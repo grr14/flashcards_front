@@ -26,4 +26,13 @@ module.exports = (app) => {
       secure: true
     })
   )
+  app.use(
+    proxy("/card", {
+      target: isDev
+        ? `${process.env.REACT_APP_FLASK_BACKEND_URL_DEV}:${process.env.REACT_APP_FLASK_PORT_DEV}`
+        : process.env.REACT_APP_FLASK_BACKEND_URL_PROD,
+      changeOrigin: true,
+      secure: true
+    })
+  )
 }
