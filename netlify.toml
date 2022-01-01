@@ -12,6 +12,6 @@
 
 [[redirects]]
   from = "/card/*"
-  to = "https://flashcardsbackend.herokuapp.com/deck/:splat"
+  to = "https://flashcardsbackend.herokuapp.com/card/:splat"
   status = 200
   force = true
