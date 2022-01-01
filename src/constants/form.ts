@@ -51,3 +51,14 @@ export const changePasswordFormValidationSchema = yup.object({
 export const biographyFormValidationSchema = yup.object({
   biography: yup.string().max(2000, "Maximum 2000 caracters")
 })
+
+export const addCardFormValidationSchema = yup.object({
+  front: yup
+    .string()
+    .min(1, "No field must be empty")
+    .max(300, "Max length: 300 caracters."),
+  back: yup
+    .string()
+    .min(1, "No field must be empty")
+    .max(300, "Max length: 300 caracters.")
+})

@@ -81,3 +81,8 @@ export type AllDecks = {
   count: number
   decks: Deck[]
 }
+
+export type AddCardFormValues = {
+  front: string
+  back: string
+}

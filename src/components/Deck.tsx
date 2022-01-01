@@ -9,10 +9,12 @@ import {
   Text,
   VStack
 } from "@chakra-ui/react"
+import React from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import { Deck as DeckType } from "../common/types"
-import UnfoldedCard from "./UnfoldedCard"
+import CreateCardButton from "./CreateCardButton"
+import CardEdit from "./CardEdit"
 
 const Deck = () => {
   const params = useParams()
@@ -131,22 +133,30 @@ const Deck = () => {
           ml="20px"
           p="15px"
         >
-          <Flex wrap="wrap">
-            {deck?.cards
-              ?.sort((c1, c2) => {
-                if (c1.id > c2.id) {
-                  return 1
-                }
-                return -1
-              })
-              .map((card, idx) => (
-                <UnfoldedCard key={idx} card={card} />
-              ))}
-          </Flex>
+          <EditDeck deck={deck} />
         </Box>
       </Flex>
     </Flex>
   )
 }
+
+const EditDeck = ({ deck }: { deck: DeckType | undefined }) => (
+  <Flex wrap="wrap">
+    <React.Fragment>
+      {deck?.cards
+        ?.sort((c1, c2) => {
+          if (c1.id > c2.id) {
+            return 1
+          }
+          return -1
+        })
+        .map((card, idx) => (
+          <CardEdit key={idx} card={card} />
+        ))}
+    </React.Fragment>
+
+    <CreateCardButton deckId={deck?.id} />
+  </Flex>
+)
 
 export default Deck

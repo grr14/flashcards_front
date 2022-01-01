@@ -1,7 +1,6 @@
 import { CheckIcon, DeleteIcon, EditIcon, SunIcon } from "@chakra-ui/icons"
 import {
   Box,
-  Button,
   Divider,
   Flex,
   FormControl,
@@ -9,14 +8,17 @@ import {
   IconButton,
   Input,
   Spacer,
-  Text
+  Text,
+  Tooltip,
+  useToast
 } from "@chakra-ui/react"
-import { useRef, useState } from "react"
+import React, { useRef, useState } from "react"
 import { useMutation, useQueryClient } from "react-query"
 import { useOutsideAlerter } from "../common/hooks"
 import { Card } from "../common/types"
+import HttpStatusCode from "../constants/httpStatusCode"
 
-const UnfoldedCard = ({ card }: { card: Card }) => {
+const CardEdit = ({ card }: { card: Card }) => {
   /* on Edit mode, we display forms to change the card content */
   const [isEdit, setIsEdit] = useState(false)
 
@@ -38,7 +40,12 @@ const UnfoldedCard = ({ card }: { card: Card }) => {
       return await (
         await fetch(`/card/edit/${card?.id}`, {
           method: "put",
-          body: JSON.stringify({ front: c.front, back: c.back })
+          body: JSON.stringify({
+            front: c.front,
+            back: c.back,
+            review: c.review,
+            is_active: c.is_active
+          })
         })
       ).json()
     },
@@ -65,8 +72,28 @@ const UnfoldedCard = ({ card }: { card: Card }) => {
   /* focus the input element on edit */
   const [frontIsFocused, setFrontIsFocused] = useState(true)
 
+  const toast = useToast()
+  const deleteCard = async (e: React.SyntheticEvent) => {
+    e.preventDefault()
+
+    const response = await fetch(`/card/delete/${card.id}`, {
+      method: "delete"
+    })
+
+    const data = await response.json()
+    if (response.status === HttpStatusCode.BAD_REQUEST) {
+      toast({
+        title: "Error",
+        description: data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
+    }
+  }
+
   return (
-    <Flex direction="column">
+    <Flex direction="column" mb="10px">
       <Box
         boxShadow="md"
         rounded="xl"
@@ -184,18 +211,44 @@ const UnfoldedCard = ({ card }: { card: Card }) => {
         </FormControl>
       </Box>
       <Box
-        bg="yellow.300"
+        bg="blue.600"
         border="solid 1px black"
-        rounded="3xl"
+        rounded="2xl"
         display="flex"
         justifyContent="center"
         alignItems="center"
+        m="0 10px"
+        opacity="0.9"
       >
-        <IconButton aria-label="Desactivate card" icon={<SunIcon />} />
-        <IconButton aria-label="Delete card" icon={<DeleteIcon />} />
+        <Tooltip hasArrow label="Edit" bg="gray.200" color="black">
+          <IconButton
+            aria-label="Edit card"
+            icon={<EditIcon />}
+            onClick={() => setIsEdit(true)}
+            m="4px"
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="Set inactive" bg="gray.200" color="black">
+          <IconButton
+            aria-label="Desactivate card"
+            icon={<SunIcon />}
+            onClick={() => updateCard.mutate({ is_active: !card.is_active })}
+            m="4px"
+          />
+        </Tooltip>
+
+        <Tooltip hasArrow label="Delete" bg="gray.200" color="black">
+          <IconButton
+            aria-label="Delete card"
+            icon={<DeleteIcon />}
+            onClick={deleteCard}
+            m="4px"
+          />
+        </Tooltip>
       </Box>
     </Flex>
   )
 }
 
-export default UnfoldedCard
+export default CardEdit
