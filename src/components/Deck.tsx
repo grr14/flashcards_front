@@ -1,4 +1,10 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
   Button,
   Center,
@@ -7,14 +13,19 @@ import {
   HStack,
   Skeleton,
   Text,
+  useDisclosure,
+  useToast,
   VStack
 } from "@chakra-ui/react"
-import React from "react"
+import React, { useRef, useState } from "react"
 import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Deck as DeckType } from "../common/types"
 import CreateCardButton from "./CreateCardButton"
 import CardEdit from "./CardEdit"
+import { logout } from "../auth"
+import HttpStatusCode from "../constants/httpStatusCode"
+import { ACCOUNT_DELETED, PROFILE } from "../constants/routes"
 
 const Deck = () => {
   const params = useParams()
@@ -27,6 +38,25 @@ const Deck = () => {
   } = useQuery<DeckType, Error>("getDeckById", async () => {
     return await (await fetch(`/deck/get/${id}`)).json()
   })
+
+  const [showEditSection, setShowEditSection] = useState(true)
+  const [showStudySection, setShowStudySection] = useState(false)
+
+  const handleShowSection = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const t = e.target as HTMLButtonElement
+
+    switch (t.getAttribute("name")) {
+      case "edit":
+      default:
+        setShowEditSection(true)
+        setShowStudySection(false)
+        break
+      case "study":
+        setShowEditSection(false)
+        setShowStudySection(true)
+        break
+    }
+  }
 
   if (isLoading) {
     return (
@@ -114,14 +144,25 @@ const Deck = () => {
           justify="space-between"
         >
           <VStack w="100%">
-            <Button w="100%" colorScheme="blue" width="max-content">
+            <Button
+              w="100%"
+              colorScheme="blue"
+              width="max-content"
+              name="study"
+              onClick={handleShowSection}
+            >
               Study !
             </Button>
-            <Button w="100%" colorScheme="blue">
+            <Button
+              w="100%"
+              colorScheme="blue"
+              onClick={handleShowSection}
+              name="edit"
+            >
               Edit deck
             </Button>
           </VStack>
-          <Button colorScheme="red">Delete</Button>
+          <DeleteDeck deckId={deck?.id} />
         </Flex>
         {/* Right area*/}
         <Box
@@ -132,8 +173,13 @@ const Deck = () => {
           h="100%"
           ml="20px"
           p="15px"
+          overflowY="scroll"
         >
-          <EditDeck deck={deck} />
+          {showEditSection ? (
+            <EditDeck deck={deck} />
+          ) : (
+            <StudyDeck deck={deck} />
+          )}
         </Box>
       </Flex>
     </Flex>
@@ -158,5 +204,71 @@ const EditDeck = ({ deck }: { deck: DeckType | undefined }) => (
     <CreateCardButton deckId={deck?.id} />
   </Flex>
 )
+
+const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
+  return <p>Lets study</p>
+}
+
+const DeleteDeck = ({ deckId }: { deckId: number | undefined }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  const toast = useToast()
+  const navigate = useNavigate()
+
+  const deleteDeck = async () => {
+    const response = await fetch(`/deck/delete/${deckId}`, {
+      method: "delete"
+    })
+    const data = await response.json()
+    if (response.status === HttpStatusCode.BAD_REQUEST) {
+      toast({
+        title: "Error",
+        description: data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
+    } else if (response.ok) {
+      navigate(PROFILE)
+    }
+  }
+
+  return (
+    <React.Fragment>
+      <Button onClick={onOpen} colorScheme="red">
+        Delete
+      </Button>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete the Deck
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={deleteDeck} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </React.Fragment>
+  )
+}
 
 export default Deck

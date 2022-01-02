@@ -127,17 +127,24 @@ const CardEdit = ({ card }: { card: Card }) => {
                 </Text>
                 <Spacer />
                 {isEdit && (
-                  <IconButton
-                    h="2em"
-                    position="absolute"
-                    top="10px"
-                    right="10px"
-                    aria-label="Save changes"
-                    colorScheme="green"
-                    icon={<CheckIcon />}
-                    type="submit"
-                    onClick={handleSubmit}
-                  />
+                  <Tooltip
+                    hasArrow
+                    label="Save changes"
+                    bg="blue.600"
+                    color="white"
+                  >
+                    <IconButton
+                      h="2em"
+                      position="absolute"
+                      top="10px"
+                      right="10px"
+                      aria-label="Save changes"
+                      colorScheme="green"
+                      icon={<CheckIcon />}
+                      type="submit"
+                      onClick={handleSubmit}
+                    />
+                  </Tooltip>
                 )}
               </HStack>
 
