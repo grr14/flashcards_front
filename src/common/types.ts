@@ -74,6 +74,7 @@ export type Deck = {
   is_public: boolean
   created_at?: Date
   updated_at?: Date
+  nb_cards?: number
   cards?: Card[]
 }
 
@@ -85,4 +86,10 @@ export type AllDecks = {
 export type AddCardFormValues = {
   front: string
   back: string
+}
+
+export type CreateDeckFormValues = {
+  name: string
+  theme: string
+  isPublic: boolean
 }

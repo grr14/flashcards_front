@@ -173,7 +173,6 @@ const Deck = () => {
           h="100%"
           ml="20px"
           p="15px"
-          overflowY="scroll"
         >
           {showEditSection ? (
             <EditDeck deck={deck} />

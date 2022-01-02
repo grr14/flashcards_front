@@ -55,10 +55,28 @@ export const biographyFormValidationSchema = yup.object({
 export const addCardFormValidationSchema = yup.object({
   front: yup
     .string()
-    .min(1, "No field must be empty")
-    .max(300, "Max length: 300 caracters."),
+    .min(1)
+    .max(300, "Max length: 300 caracters.")
+    .required("No field must be empty."),
   back: yup
     .string()
-    .min(1, "No field must be empty")
+    .min(1)
     .max(300, "Max length: 300 caracters.")
+    .required("No field must be empty.")
+})
+
+export const createDeckFormValidationSchema = yup.object({
+  name: yup
+    .string()
+    .min(1)
+    .max(50, "Max length: 50 caracters.")
+    .required("The deck must have a name."),
+  theme: yup
+    .string()
+    .min(1)
+    .max(50, "Max length: 50 caracters.")
+    .required("The deck must have a category."),
+  isPublic: yup
+    .boolean()
+    .required("Do you want other users to be able to see the deck ?")
 })

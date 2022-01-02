@@ -8,10 +8,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
-  HStack,
-  Input,
   Skeleton,
-  Spacer,
   Text,
   Textarea,
   TextareaProps
@@ -26,12 +23,12 @@ import {
 } from "react-query"
 import { Link } from "react-router-dom"
 import { authFetch } from "../auth"
-import { AllDecks, BiographyFormValues, User } from "../common/types"
+import { BiographyFormValues, User } from "../common/types"
 import { biographyFormValidationSchema } from "../constants/form"
-import { DECK, SETTINGS } from "../constants/routes"
+import { SETTINGS } from "../constants/routes"
 import ResizeTextarea from "react-textarea-autosize"
-import HttpStatusCode from "../constants/httpStatusCode"
-import { AddIcon, SettingsIcon } from "@chakra-ui/icons"
+import { SettingsIcon } from "@chakra-ui/icons"
+import UserDecks from "./UserDecks"
 
 const Profile = () => {
   const {
@@ -240,118 +237,6 @@ const Biography = ({ username, biography, refetch }: BiographyProps) => {
         )}
       </Formik>
     </Box>
-  )
-}
-
-const UserDecks = ({ userId }: { userId: number | undefined }) => {
-  console.log(`userID = ${userId}`)
-
-  const { data, isLoading, isError } = useQuery<AllDecks, Error>(
-    "getAllUserDecks",
-    async () => {
-      const response = await fetch(`/deck/get_all/${userId}`)
-      const data = await response.json()
-      if (response.status === HttpStatusCode.OK) {
-        console.log(`response=${JSON.stringify(response)}`)
-      }
-      return data
-    }
-  )
-
-  if (isLoading) {
-    return (
-      <Flex wrap="wrap">
-        {[...Array(5).keys()].map((el) => (
-          <Box
-            key={el}
-            bgGradient="linear(to-tr, blue.200, blue.400)"
-            border="solid 1px black"
-            rounded="xl"
-            p="10px"
-            m="5px"
-            w="375px"
-            _hover={{
-              bgGradient: "linear(to-tr, blue.300, blue.500)",
-              boxShadow: "xl"
-            }}
-          >
-            <Skeleton w="200px" h="30px" mb="5px" />
-            <HStack>
-              <b>Category:</b>
-              <Skeleton w="75px" h="15px" />
-            </HStack>
-
-            <HStack>
-              <Text>Deck size:</Text> <Skeleton w="75px" h="15px" />
-            </HStack>
-
-            <HStack>
-              <i>Last updated on</i> <Skeleton w="75px" h="15px" />
-            </HStack>
-          </Box>
-        ))}
-      </Flex>
-    )
-  }
-
-  if (isError) {
-    return <p>fichtre</p>
-  }
-
-  return (
-    <>
-      <HStack mb="15px">
-        <Flex justifyContent="center" alignItems="center">
-          <Heading>My decks</Heading>
-          <Button ml="20px" colorScheme="blue" leftIcon={<AddIcon />}>
-            Create New Deck
-          </Button>
-        </Flex>
-
-        <Spacer />
-
-        <Input
-          bg="white"
-          w="275px"
-          placeholder="Search decks by name or category"
-        />
-      </HStack>
-
-      <Flex wrap="wrap">
-        {data?.decks.map((deck, idx) => {
-          return (
-            <Link key={idx} to={{ pathname: `${DECK}/${deck.id}` }}>
-              <Box
-                bgGradient="linear(to-tr, blue.200, blue.400)"
-                border="solid 1px black"
-                rounded="xl"
-                p="10px"
-                m="5px"
-                _hover={{
-                  bgGradient: "linear(to-tr, blue.300, blue.500)",
-                  cursor: "pointer",
-                  boxShadow: "xl"
-                }}
-              >
-                <Heading size="lg">{deck.name}</Heading>
-                <Text>
-                  <b>Category: </b>
-                  {deck.theme}
-                </Text>
-                {deck.cards?.length && deck.cards?.length > 0 ? (
-                  <Text>Deck size: {deck.cards?.length} card</Text>
-                ) : (
-                  <Text>This deck is empty.</Text>
-                )}
-                <Text>
-                  <i>Last updated on {deck.updated_at}</i>
-                </Text>
-              </Box>
-            </Link>
-          )
-        })}
-      </Flex>
-    </>
   )
 }
 
