@@ -23,9 +23,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import { Deck as DeckType } from "../common/types"
 import CreateCardButton from "./CreateCardButton"
 import CardEdit from "./CardEdit"
-import { logout } from "../auth"
 import HttpStatusCode from "../constants/httpStatusCode"
-import { ACCOUNT_DELETED, PROFILE } from "../constants/routes"
+import { PROFILE } from "../constants/routes"
 
 const Deck = () => {
   const params = useParams()

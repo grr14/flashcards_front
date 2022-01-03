@@ -29,6 +29,7 @@ import { SETTINGS } from "../constants/routes"
 import ResizeTextarea from "react-textarea-autosize"
 import { SettingsIcon } from "@chakra-ui/icons"
 import UserDecks from "./UserDecks"
+import { formatDate } from "../common/utils"
 
 const Profile = () => {
   const {
@@ -104,13 +105,13 @@ const Profile = () => {
           <Text>
             <b>Date joined:</b>
             <Text as="span" ml="5px" height="18px" flex="1">
-              {user?.date_joined}
+              {formatDate(user?.date_joined)}
             </Text>
           </Text>
           <Text>
             <b>Last login:</b>
             <Text as="span" ml="5px" height="18px" flex="1">
-              {user?.last_login}
+              {formatDate(user?.last_login)}
             </Text>
           </Text>
         </Box>

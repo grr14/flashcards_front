@@ -10,7 +10,8 @@ import {
 } from "@chakra-ui/react"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
-import { AllDecks } from "../common/types"
+import { AllDecks, Deck } from "../common/types"
+import { formatDate } from "../common/utils"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { DECK } from "../constants/routes"
 import CreateDeckButton from "./CreateDeckButton"
@@ -70,6 +71,9 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
     return <p>fichtre</p>
   }
 
+  const formattedDate = (date: Date | undefined) =>
+    formatDate(date, true).split(" ").join(" at ")
+
   return (
     <>
       <HStack mb="15px">
@@ -117,7 +121,7 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
                   <Text>This deck is empty.</Text>
                 )}
                 <Text>
-                  <i>Last updated on {deck.updated_at}</i>
+                  <i>Last updated on {formattedDate(deck?.updated_at)}</i>
                 </Text>
               </Box>
             </Link>
