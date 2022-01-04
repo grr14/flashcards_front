@@ -96,15 +96,30 @@ const CardEdit = ({ card }: { card: Card }) => {
     <Flex direction="column" mb="10px">
       <Box
         boxShadow="md"
-        rounded="xl"
-        bg={"blue.100"}
+        borderRadius="xl"
+        bg="blue.100"
         m="5px"
         minW="240px"
-        minH="240px"
-        overflow="hidden"
+        maxW="400px"
+        height="240px"
+        overflowY="auto"
+        sx={{
+          "&::-webkit-scrollbar": {
+            /* display: "none", */
+            width: "16px",
+            borderRadius: "20px",
+            backgroundColor: `rgba(0, 0, 0, 0.05)`
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: `rgba(0, 0, 0, 0.05)`,
+            borderRadius: "50px"
+          }
+        }}
         ref={wrapperRef}
         transform={isEdit ? "scale(1.5)" : "none"}
-        filter={card?.is_active ? "grayscale(0%)" : "grayscale(100%)"}
+        filter={
+          card?.is_active ? "grayscale(0%)" : "grayscale(100%) blur(1.5px)"
+        }
         transition="transform 0.2s ease-in"
         zIndex={isEdit ? 5 : 0}
         onClick={() => setIsEdit(true)}
@@ -168,7 +183,9 @@ const CardEdit = ({ card }: { card: Card }) => {
                     ref={(input) => input && frontIsFocused && input.focus()}
                   />
                 ) : (
-                  <Text fontSize="xl">{card.front}</Text>
+                  <Text p="0 10px" mb="3px" fontSize="xl">
+                    {card.front}
+                  </Text>
                 )}
               </Box>
             </Flex>
@@ -210,7 +227,9 @@ const CardEdit = ({ card }: { card: Card }) => {
                     onChange={handleCardContentChange}
                   />
                 ) : (
-                  <Text fontSize="xl">{card.back}</Text>
+                  <Text p="0 10px" mb="3px" fontSize="xl">
+                    {card.back}
+                  </Text>
                 )}
               </Box>
             </Flex>
@@ -236,7 +255,12 @@ const CardEdit = ({ card }: { card: Card }) => {
           />
         </Tooltip>
 
-        <Tooltip hasArrow label="Set inactive" bg="gray.200" color="black">
+        <Tooltip
+          hasArrow
+          label={card?.is_active ? "Set inactive" : "Set active"}
+          bg="gray.200"
+          color="black"
+        >
           <IconButton
             aria-label="Desactivate card"
             icon={<SunIcon />}
