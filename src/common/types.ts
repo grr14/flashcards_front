@@ -93,3 +93,10 @@ export type CreateDeckFormValues = {
   theme: string
   isPublic: boolean
 }
+
+const answerTypes = ["correct", "hesitant", "wrong"] as const
+export type AnswerType = typeof answerTypes[number]
+
+export type AnswerTypesCounter = {
+  [key in AnswerType]: number
+}

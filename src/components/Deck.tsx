@@ -7,10 +7,16 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
+  ButtonGroup,
   Center,
+  Divider,
+  filter,
   Flex,
   Heading,
   HStack,
+  List,
+  ListIcon,
+  ListItem,
   Skeleton,
   Text,
   useDisclosure,
@@ -20,11 +26,22 @@ import {
 import React, { useRef, useState } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
-import { Deck as DeckType } from "../common/types"
+import {
+  AnswerType,
+  AnswerTypesCounter,
+  Card,
+  Deck as DeckType
+} from "../common/types"
 import CreateCardButton from "./CreateCardButton"
 import CardEdit from "./CardEdit"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { PROFILE } from "../constants/routes"
+import {
+  CheckCircleIcon,
+  QuestionOutlineIcon,
+  QuestionIcon,
+  CloseIcon
+} from "@chakra-ui/icons"
 
 const Deck = () => {
   const params = useParams()
@@ -204,7 +221,125 @@ const EditDeck = ({ deck }: { deck: DeckType | undefined }) => (
 )
 
 const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
-  return <p>Lets study</p>
+  const [isShowFront, setIsShowFront] = useState(true)
+
+  const [answersType, setAnswersType] = useState<AnswerTypesCounter>({
+    correct: 0,
+    hesitant: 0,
+    wrong: 0
+  })
+
+  const filteredDeck = deck?.cards?.filter((card) => card.is_active)
+  const [currentCard, setCurrentCard] = useState<Card | undefined>(
+    filteredDeck![0]
+  )
+
+  const flipCard = () => {
+    setIsShowFront(false)
+  }
+
+  const getNextCard = (e: React.MouseEvent<HTMLButtonElement>) => {
+    /* we get the index of the next card to display */
+    let idx = filteredDeck!.findIndex((c) => c.id === currentCard!?.id)
+    if (idx === filteredDeck!.length - 1) {
+      idx = 0 /* if last card, back to the start */
+    } else {
+      idx++
+    }
+
+    /* we update the counters of answers type */
+    let t = e.target as HTMLButtonElement
+    const answer = t.getAttribute("name") as AnswerType
+
+    setAnswersType({ ...answersType, [answer]: answersType[answer] + 1 })
+
+    setIsShowFront(true)
+
+    setCurrentCard(filteredDeck![idx])
+  }
+
+  return (
+    <Flex flex="1" h="100%" justifyContent="space-around" alignItems="center">
+      <Box
+        border="solid 1px black"
+        h="100%"
+        display="flex"
+        flexDirection="column"
+      >
+        <Heading size="xl">Infos</Heading>
+        <Box>
+          <Heading size="lg">Answers</Heading>
+          <List>
+            <ListItem>
+              <ListIcon as={CheckCircleIcon} color="green.500" />
+              Correct: {answersType.correct}
+            </ListItem>
+
+            <ListItem>
+              <ListIcon as={QuestionIcon} color="orange.500" />
+              Hesitant: {answersType.hesitant}
+            </ListItem>
+            <ListItem>
+              <ListIcon as={CloseIcon} color="red.500" />
+              Wrong: {answersType.wrong}
+            </ListItem>
+          </List>
+        </Box>
+        <Divider />
+        <Box>
+          <Heading size="lg">Total Time</Heading>
+          <Text>0.0</Text>
+        </Box>
+        <Divider />
+        <Box>
+          <Heading size="lg">On this card</Heading>
+          <Text>0.0</Text>
+        </Box>
+      </Box>
+      {isShowFront ? (
+        <Flex alignItems="center" justifyContent="center">
+          <Box
+            bg="white"
+            h="400px"
+            w="400px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {currentCard!?.front}
+          </Box>
+          <Button onClick={flipCard}>Show answer</Button>
+        </Flex>
+      ) : (
+        <Flex alignItems="center" justifyContent="center">
+          <Box
+            bg="white"
+            h="400px"
+            w="400px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {currentCard!?.back}
+          </Box>
+          <Flex direction="column" justifyContent="center">
+            <Text>Rate your answer</Text>
+            <ButtonGroup>
+              <Button name="correct" onClick={getNextCard}>
+                Correct
+              </Button>
+              <Button name="hesitant" onClick={getNextCard}>
+                Hesitant
+              </Button>
+              <Button name="wrong" onClick={getNextCard}>
+                Wrong
+              </Button>
+            </ButtonGroup>
+          </Flex>
+        </Flex>
+      )}
+    </Flex>
+  )
 }
 
 const DeleteDeck = ({ deckId }: { deckId: number | undefined }) => {
