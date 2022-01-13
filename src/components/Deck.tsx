@@ -10,7 +10,6 @@ import {
   ButtonGroup,
   Center,
   Divider,
-  filter,
   Flex,
   Heading,
   HStack,
@@ -36,12 +35,9 @@ import CreateCardButton from "./CreateCardButton"
 import CardEdit from "./CardEdit"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { PROFILE } from "../constants/routes"
-import {
-  CheckCircleIcon,
-  QuestionOutlineIcon,
-  QuestionIcon,
-  CloseIcon
-} from "@chakra-ui/icons"
+import { CheckCircleIcon, QuestionIcon, CloseIcon } from "@chakra-ui/icons"
+import { useTimer } from "use-timer"
+import { formatTime } from "../common/utils"
 
 const Deck = () => {
   const params = useParams()
@@ -234,8 +230,18 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
     filteredDeck![0]
   )
 
+  const [totalTime, setTotalTime] = useState(0)
+  const { time, start, pause, reset, status } = useTimer({
+    autostart: true,
+    interval: 1000
+  })
+
   const flipCard = () => {
     setIsShowFront(false)
+    pause()
+
+    /* update the total time */
+    setTotalTime((prevTotalTime) => prevTotalTime + time)
   }
 
   const getNextCard = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -246,15 +252,18 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
     } else {
       idx++
     }
+    /* for the moment this is infinite... TODO: make the actual algorithm */
 
     /* we update the counters of answers type */
     let t = e.target as HTMLButtonElement
     const answer = t.getAttribute("name") as AnswerType
-
     setAnswersType({ ...answersType, [answer]: answersType[answer] + 1 })
 
-    setIsShowFront(true)
+    /* reset the timer */
+    reset()
 
+    start()
+    setIsShowFront(true)
     setCurrentCard(filteredDeck![idx])
   }
 
@@ -288,12 +297,12 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
         <Divider />
         <Box>
           <Heading size="lg">Total Time</Heading>
-          <Text>0.0</Text>
+          <Text>{formatTime(totalTime)}</Text>
         </Box>
         <Divider />
         <Box>
           <Heading size="lg">On this card</Heading>
-          <Text>0.0</Text>
+          <Text>{formatTime(time)}</Text>
         </Box>
       </Box>
       {isShowFront ? (
