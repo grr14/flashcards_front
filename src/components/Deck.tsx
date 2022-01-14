@@ -11,6 +11,8 @@ import {
   Center,
   Divider,
   Flex,
+  Grid,
+  GridItem,
   Heading,
   HStack,
   List,
@@ -35,7 +37,12 @@ import CreateCardButton from "./CreateCardButton"
 import CardEdit from "./CardEdit"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { PROFILE } from "../constants/routes"
-import { CheckCircleIcon, QuestionIcon, CloseIcon } from "@chakra-ui/icons"
+import {
+  CheckCircleIcon,
+  QuestionIcon,
+  CloseIcon,
+  RepeatIcon
+} from "@chakra-ui/icons"
 import { useTimer } from "use-timer"
 import { formatTime } from "../common/utils"
 
@@ -115,7 +122,7 @@ const Deck = () => {
             ml="20px"
             p="15px"
           >
-            test
+            {showStudySection}
           </Box>
         </Flex>
       </Flex>
@@ -178,9 +185,9 @@ const Deck = () => {
         </Flex>
         {/* Right area*/}
         <Box
-          border="solid 1px black"
           rounded="xl"
-          bg="yellow.100"
+          //border="solid 1px black"
+          //bg="yellow.100"
           flex="1"
           h="100%"
           ml="20px"
@@ -218,20 +225,30 @@ const EditDeck = ({ deck }: { deck: DeckType | undefined }) => (
 
 const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
   const [isShowFront, setIsShowFront] = useState(true)
+  const [cardsStudied, setCardsStudied] = useState(0)
 
-  const [answersType, setAnswersType] = useState<AnswerTypesCounter>({
+  const initialAnswers: AnswerTypesCounter = {
     correct: 0,
     hesitant: 0,
     wrong: 0
-  })
+  }
+  const [answersType, setAnswersType] =
+    useState<AnswerTypesCounter>(initialAnswers)
 
-  const filteredDeck = deck?.cards?.filter((card) => card.is_active)
+  const filteredDeck = deck?.cards
+    ?.filter((card) => card.is_active)
+    .sort((c1, c2) => {
+      if (c1.id > c2.id) {
+        return 1
+      }
+      return -1
+    })
   const [currentCard, setCurrentCard] = useState<Card | undefined>(
     filteredDeck![0]
   )
 
   const [totalTime, setTotalTime] = useState(0)
-  const { time, start, pause, reset, status } = useTimer({
+  const { time, start, pause, reset } = useTimer({
     autostart: true,
     interval: 1000
   })
@@ -259,6 +276,9 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
     const answer = t.getAttribute("name") as AnswerType
     setAnswersType({ ...answersType, [answer]: answersType[answer] + 1 })
 
+    /* update cards studied counter */
+    setCardsStudied((prevCount) => prevCount + 1)
+
     /* reset the timer */
     reset()
 
@@ -267,87 +287,198 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
     setCurrentCard(filteredDeck![idx])
   }
 
-  return (
-    <Flex flex="1" h="100%" justifyContent="space-around" alignItems="center">
-      <Box
-        border="solid 1px black"
-        h="100%"
-        display="flex"
-        flexDirection="column"
-      >
-        <Heading size="xl">Infos</Heading>
-        <Box>
-          <Heading size="lg">Answers</Heading>
-          <List>
-            <ListItem>
-              <ListIcon as={CheckCircleIcon} color="green.500" />
-              Correct: {answersType.correct}
-            </ListItem>
+  const restart = () => {
+    setAnswersType(initialAnswers)
+    reset()
+    setIsShowFront(true)
+    setCurrentCard(filteredDeck![0])
+    setTotalTime(0)
+    setCardsStudied(0)
+    start()
+  }
 
-            <ListItem>
-              <ListIcon as={QuestionIcon} color="orange.500" />
-              Hesitant: {answersType.hesitant}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CloseIcon} color="red.500" />
-              Wrong: {answersType.wrong}
-            </ListItem>
-          </List>
+  return (
+    <Grid templateColumns="repeat(3, 1fr)" h="100%">
+      <GridItem h="100%" display="flex" justifyContent="center">
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          w="50%"
+          boxShadow="lg"
+          borderRadius="xl"
+          bg="gray.300"
+          p="5px 15px"
+        >
+          <Heading size="xl" mb="10px">
+            This Session:
+          </Heading>
+          <Box mb="5px">
+            <Text fontSize="lg">Cards studied: {cardsStudied}</Text>
+          </Box>
+          <Box mb="15px">
+            <Heading size="lg">Answers</Heading>
+            <List>
+              <ListItem ml="10px" display="flex" alignItems="center">
+                <ListIcon as={CheckCircleIcon} color="green.500" />
+                <Text fontSize="lg">Correct: {answersType.correct}</Text>
+              </ListItem>
+
+              <ListItem ml="10px" display="flex" alignItems="center">
+                <ListIcon as={QuestionIcon} color="orange.500" />
+                <Text fontSize="lg">Hesitant: {answersType.hesitant}</Text>
+              </ListItem>
+              <ListItem ml="10px" display="flex" alignItems="center">
+                <ListIcon as={CloseIcon} color="red.500" />
+                <Text fontSize="lg">Wrong: {answersType.wrong}</Text>
+              </ListItem>
+            </List>
+          </Box>
+          <Divider />
+          <Box m="10px 0 5px 0">
+            <Heading size="lg" mb="5px">
+              Answer Time
+            </Heading>
+            <TimerDisplay time={time} />
+          </Box>
+          <Box mb="5px">
+            <Heading size="lg" mb="5px">
+              Total Time
+            </Heading>
+            <TimerDisplay time={totalTime} />
+          </Box>
+          <Box alignSelf="center" justifySelf="flex-end" mt="auto" mb="15px">
+            <Button
+              colorScheme="blue"
+              leftIcon={<RepeatIcon />}
+              onClick={restart}
+            >
+              Restart
+            </Button>
+          </Box>
         </Box>
-        <Divider />
-        <Box>
-          <Heading size="lg">Total Time</Heading>
-          <Text>{formatTime(totalTime)}</Text>
-        </Box>
-        <Divider />
-        <Box>
-          <Heading size="lg">On this card</Heading>
-          <Text>{formatTime(time)}</Text>
-        </Box>
-      </Box>
+      </GridItem>
       {isShowFront ? (
-        <Flex alignItems="center" justifyContent="center">
-          <Box
-            bg="white"
-            h="400px"
-            w="400px"
+        <>
+          <GridItem
+            h="100%"
             display="flex"
             justifyContent="center"
             alignItems="center"
+            flexDirection="column"
           >
-            {currentCard!?.front}
-          </Box>
-          <Button onClick={flipCard}>Show answer</Button>
-        </Flex>
+            <Heading mb="15px">Question</Heading>
+            <Box
+              bg="white"
+              boxShadow="xl"
+              borderRadius="md"
+              h="400px"
+              w="400px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text fontSize="3xl">{currentCard!?.front}</Text>
+            </Box>
+          </GridItem>
+          <GridItem
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            w="100%"
+            h="100%"
+          >
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              p="15px"
+              boxShadow="lg"
+              borderRadius="xl"
+              bg="gray.300"
+            >
+              <Heading fontSize="lg" mb="20px">
+                Click to see the answer!
+              </Heading>
+              <Button onClick={flipCard}>Flip card</Button>
+            </Box>
+          </GridItem>
+        </>
       ) : (
-        <Flex alignItems="center" justifyContent="center">
-          <Box
-            bg="white"
-            h="400px"
-            w="400px"
+        <>
+          <GridItem
+            h="100%"
             display="flex"
+            flexDirection="column"
             justifyContent="center"
             alignItems="center"
           >
-            {currentCard!?.back}
-          </Box>
-          <Flex direction="column" justifyContent="center">
-            <Text>Rate your answer</Text>
-            <ButtonGroup>
-              <Button name="correct" onClick={getNextCard}>
-                Correct
-              </Button>
-              <Button name="hesitant" onClick={getNextCard}>
-                Hesitant
-              </Button>
-              <Button name="wrong" onClick={getNextCard}>
-                Wrong
-              </Button>
-            </ButtonGroup>
-          </Flex>
-        </Flex>
+            <Heading mb="15px">Answer</Heading>
+            <Box
+              bg="white"
+              boxShadow="xl"
+              borderRadius="md"
+              h="400px"
+              w="400px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Text fontSize="3xl">{currentCard!?.back}</Text>
+            </Box>
+          </GridItem>
+          <GridItem
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            w="100%"
+            h="100%"
+          >
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              p="15px"
+              boxShadow="lg"
+              borderRadius="xl"
+              bg="gray.300"
+            >
+              <Heading fontSize="xl" mb="20px">
+                Evaluate your answer
+              </Heading>
+              <ButtonGroup>
+                <Button
+                  colorScheme="gray"
+                  color="green.500"
+                  name="correct"
+                  onClick={getNextCard}
+                >
+                  Correct
+                </Button>
+                <Button
+                  colorScheme="gray"
+                  color="orange.500"
+                  name="hesitant"
+                  onClick={getNextCard}
+                >
+                  Hesitant
+                </Button>
+                <Button
+                  colorScheme="gray"
+                  color="red.500"
+                  name="wrong"
+                  onClick={getNextCard}
+                >
+                  Wrong
+                </Button>
+              </ButtonGroup>
+            </Box>
+          </GridItem>
+        </>
       )}
-    </Flex>
+    </Grid>
   )
 }
 
@@ -412,5 +543,20 @@ const DeleteDeck = ({ deckId }: { deckId: number | undefined }) => {
     </React.Fragment>
   )
 }
+
+const TimerDisplay = ({ time }: { time: number }) => (
+  <Box bg="gray.700" border="solid 3px" borderColor="gray.300">
+    <Text
+      color="gray.50"
+      textAlign="right"
+      p="2px"
+      mr="5px"
+      fontSize="lg"
+      fontFamily="courier"
+    >
+      {formatTime(time)}
+    </Text>
+  </Box>
+)
 
 export default Deck

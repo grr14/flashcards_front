@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
-import { AllDecks, Deck } from "../common/types"
+import { AllDecks } from "../common/types"
 import { formatDate } from "../common/utils"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { DECK } from "../constants/routes"

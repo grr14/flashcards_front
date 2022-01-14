@@ -1,4 +1,4 @@
-import { useEffect, RefObject, SetStateAction, useState } from "react"
+import { useEffect, RefObject, SetStateAction } from "react"
 
 /**
  * Hook that alerts clicks outside of the passed ref, set the state of the callback to false
@@ -18,7 +18,7 @@ const useOutsideAlerter = (
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [ref])
+  }, [ref, callback])
 }
 
 export { useOutsideAlerter }
