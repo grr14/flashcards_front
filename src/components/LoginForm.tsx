@@ -19,7 +19,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Either, Session, LoginError, LoginFormValues } from "../common/types"
-import { SECRET } from "../constants/routes"
+import { PROFILE } from "../constants/routes"
 import { Field, Form, Formik, FormikState } from "formik"
 import PasswordInput from "./PasswordInput"
 import { loginFormValidationSchema } from "../constants/form"
@@ -51,7 +51,7 @@ const LoginForm = () => {
         login(data)
         onClose()
         resetForm()
-        navigate(SECRET)
+        navigate(PROFILE)
       } else {
         alert("error")
       }
