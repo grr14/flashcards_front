@@ -6,7 +6,8 @@ import {
   Heading,
   Spacer,
   Input,
-  Text
+  Text,
+  Button
 } from "@chakra-ui/react"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
@@ -17,9 +18,7 @@ import { DECK } from "../constants/routes"
 import CreateDeckButton from "./CreateDeckButton"
 
 const UserDecks = ({ userId }: { userId: number | undefined }) => {
-  console.log(`userID = ${userId}`)
-
-  const { data, isLoading, isError } = useQuery<AllDecks, Error>(
+  const { data, isLoading, isError, refetch } = useQuery<AllDecks, Error>(
     "getAllUserDecks",
     async () => {
       const response = await fetch(`/deck/get_all/${userId}`)
@@ -68,7 +67,7 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
   }
 
   if (isError) {
-    return <p>fichtre</p>
+    return <Button onClick={() => refetch()}></Button>
   }
 
   const formattedDate = (date: Date | undefined) =>

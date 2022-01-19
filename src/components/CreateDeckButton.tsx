@@ -117,7 +117,7 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
             <ModalOverlay />
 
             <Form>
-              <ModalContent>
+              <ModalContent bg="gray.100">
                 <ModalHeader>Create a deck</ModalHeader>
                 <ModalCloseButton />
                 <Divider mb={15} />
@@ -131,11 +131,11 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
                         isRequired
                         mb={15}
                       >
-                        <FormLabel htmlFor="name">name</FormLabel>
+                        <FormLabel htmlFor="name">Name</FormLabel>
                         <Input
                           {...field}
                           id="name"
-                          placeholder="The question..."
+                          placeholder="Choose a name for the deck"
                           ref={initialRef}
                         />
                         <FormErrorMessage>{form.errors.name}</FormErrorMessage>
@@ -155,7 +155,7 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
                         <Input
                           {...field}
                           id="theme"
-                          placeholder="The answer..."
+                          placeholder="Language, science, history, geography..."
                         />
                         <FormErrorMessage>{form.errors.theme}</FormErrorMessage>
                       </FormControl>
@@ -174,6 +174,10 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
                         >
                           <Text textAlign="right">Make the deck public</Text>
                         </Checkbox>
+                        <Text fontSize="sm">
+                          Public decks are visible by other users in the browse
+                          decks section.
+                        </Text>
                       </FormControl>
                     )}
                   </Field>
