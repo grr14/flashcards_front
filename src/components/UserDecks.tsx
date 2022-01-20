@@ -31,6 +31,8 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
     }
   )
 
+  console.log(JSON.stringify(data))
+
   const [deckFilterText, setDeckFilterText] = useState("")
   const handleDeckFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeckFilterText(e.target.value)
@@ -112,10 +114,11 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
           name="deckFilter"
           value={deckFilterText}
           onChange={handleDeckFilter}
+          disabled={data?.count === 0}
         />
       </HStack>
 
-      {filteredDecks!?.length > 1 ? (
+      {filteredDecks!?.length > 0 ? (
         <Flex wrap="wrap">
           {filteredDecks!
             .sort((d1, d2) => {
@@ -157,6 +160,11 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
                 </Link>
               )
             })}
+        </Flex>
+      ) : data?.count === 0 ? (
+        <Flex direction="column">
+          <Text>You currently don't have a deck.</Text>
+          <Text>Why don't you create one?</Text>
         </Flex>
       ) : (
         <Box mt="15px">

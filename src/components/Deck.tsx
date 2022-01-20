@@ -297,6 +297,27 @@ const StudyDeck = ({ deck }: { deck: DeckType | undefined }) => {
     start()
   }
 
+  if (deck?.cards?.length === 0) {
+    return (
+      <Flex h="100%" justifyContent="center" alignItems="center">
+        <Box
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          padding="40px"
+          bg="gray.300"
+          borderRadius="lg"
+          boxShadow="xl"
+        >
+          <Heading fontSize="larger">The deck is empty.</Heading>
+          <Text fontSize="medium">
+            Before studying, you must add some cards into it.
+          </Text>
+        </Box>
+      </Flex>
+    )
+  }
+
   return (
     <Grid templateColumns="repeat(3, 1fr)" h="100%">
       <GridItem h="100%" display="flex" justifyContent="center">
