@@ -15,6 +15,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Tooltip,
   useDisclosure,
   useToast
 } from "@chakra-ui/react"
@@ -95,20 +96,22 @@ const CreateCardButton = ({ deckId }: { deckId: number | undefined }) => {
         onClick={openAddCardModal}
       >
         <Flex justifyContent="center" alignItems="center" w="100%" h="100%">
-          <AddIcon
-            w="30%"
-            h="30%"
-            p="5px"
-            color="blue.600"
-            border="solid 5px"
-            borderColor="blue.600"
-            borderRadius="50%"
-            _hover={{
-              borderColor: "blue.700",
-              color: "blue.700",
-              cursor: "pointer"
-            }}
-          />
+          <Tooltip hasArrow bg="blue.700" label="Create a card" fontSize="md">
+            <AddIcon
+              w="30%"
+              h="30%"
+              p="5px"
+              color="blue.600"
+              border="solid 5px"
+              borderColor="blue.600"
+              borderRadius="50%"
+              _hover={{
+                borderColor: "blue.700",
+                color: "blue.700",
+                cursor: "pointer"
+              }}
+            />
+          </Tooltip>
         </Flex>
       </Box>
 
