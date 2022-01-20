@@ -18,7 +18,13 @@ import HttpStatusCode from "../constants/httpStatusCode"
 import { DECK } from "../constants/routes"
 import CreateDeckButton from "./CreateDeckButton"
 
-const UserDecks = ({ userId }: { userId: number | undefined }) => {
+const UserDecks = ({
+  userId,
+  isFromHome
+}: {
+  userId: number | undefined
+  isFromHome?: boolean
+}) => {
   const { data, isLoading, isError, refetch } = useQuery<AllDecks, Error>(
     "getAllUserDecks",
     async () => {
@@ -102,7 +108,7 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
       <HStack mb="15px">
         <Flex justifyContent="center" alignItems="center">
           <Heading>My decks</Heading>
-          <CreateDeckButton userId={userId} />
+          <CreateDeckButton userId={userId} isFromHome={isFromHome} />
         </Flex>
 
         <Spacer />

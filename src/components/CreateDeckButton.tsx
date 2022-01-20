@@ -24,9 +24,28 @@ import { useMutation, useQueryClient } from "react-query"
 import { CreateDeckFormValues, Deck } from "../common/types"
 import { createDeckFormValidationSchema } from "../constants/form"
 
-const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
+const CreateDeckButton = ({
+  userId,
+  isFromHome
+}: {
+  userId: number | undefined
+  isFromHome?: boolean
+}) => {
   const toast = useToast()
   const { isOpen, onOpen: openCreateDeckModal, onClose } = useDisclosure()
+
+  const [isFirstTimeOpened, setIsFirstTimeOpened] = React.useState(
+    isFromHome || false
+  )
+
+  const handleOpen = () => {
+    return isOpen || isFirstTimeOpened
+  }
+
+  const handleClose = () => {
+    setIsFirstTimeOpened(false)
+    onClose()
+  }
 
   const initialRef = useRef<HTMLInputElement>(null)
 
@@ -110,8 +129,8 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
         {(values) => (
           <Modal
             initialFocusRef={initialRef}
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={handleOpen()}
+            onClose={handleClose}
             isCentered
           >
             <ModalOverlay />
@@ -187,7 +206,7 @@ const CreateDeckButton = ({ userId }: { userId: number | undefined }) => {
                   <Button type="submit" colorScheme="blue" mr={"5px"}>
                     Add
                   </Button>
-                  <Button colorScheme="blue" onClick={onClose}>
+                  <Button colorScheme="blue" onClick={handleClose}>
                     Cancel
                   </Button>
                 </ModalFooter>

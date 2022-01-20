@@ -21,7 +21,7 @@ import {
   RefetchQueryFilters,
   useQuery
 } from "react-query"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { authFetch } from "../auth"
 import { BiographyFormValues, User } from "../common/types"
 import { biographyFormValidationSchema } from "../constants/form"
@@ -39,6 +39,9 @@ const Profile = () => {
   } = useQuery<User, Error>("getUsername", async () => {
     return await (await authFetch("/api/me")).json()
   })
+
+  const location = useLocation()
+  const isFromHome = location?.state?.isFromHome || undefined
 
   if (isLoading) {
     return (
@@ -136,7 +139,7 @@ const Profile = () => {
             bg="gray.100"
             flex="1"
           >
-            <UserDecks userId={user?.id} />
+            <UserDecks userId={user?.id} isFromHome={isFromHome} />
           </Box>
         </Box>
       </Box>

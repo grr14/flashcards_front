@@ -7,8 +7,26 @@ import {
   ButtonGroup,
   Image
 } from "@chakra-ui/react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../auth"
+import { ALL_DECKS, PROFILE } from "../constants/routes"
 
 const Home = () => {
+  const navigate = useNavigate()
+  const [isLogged] = useAuth()
+  const handleBrowseDecks = () => {
+    navigate(ALL_DECKS)
+  }
+
+  const handleCreateDeck = () => {
+    if (isLogged) {
+      /* this opens the modal in CreateDeckButton */
+      navigate(PROFILE, { state: { isFromHome: true } })
+    }
+
+    //open login modal
+  }
+
   return (
     <Flex flex="1" direction="column" m="2" justifyContent="space-evenly">
       <Box p="10px" m="10px 0" fontSize="2xl">
@@ -90,9 +108,13 @@ const Home = () => {
           Get started now !
         </Heading>
         <ButtonGroup>
-          <Button colorScheme="blue">Create deck</Button>
+          <Button colorScheme="blue" onClick={handleCreateDeck}>
+            Create deck
+          </Button>
           <Text alignSelf="center">or</Text>
-          <Button colorScheme="blue">Browse decks</Button>
+          <Button colorScheme="blue" onClick={handleBrowseDecks}>
+            Browse decks
+          </Button>
         </ButtonGroup>
       </Flex>
     </Flex>

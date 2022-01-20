@@ -10,6 +10,7 @@ import { User } from "../common/types"
 import { Settings, AccountDeleted } from "../components/Settings"
 import Deck from "../components/Deck"
 import NotFound from "../components/NotFound"
+import AllDecks from "../components/AllDecks"
 
 const Router = ({
   isLogged,
@@ -49,6 +50,7 @@ const Router = ({
       <Route path={routes.VERIFY_EMAIL} element={<VerifyEmail />} />
       <Route path={routes.ACCOUNT_DELETED} element={<AccountDeleted />} />
       <Route path={`${routes.DECK}/:id`} element={<Deck />} />
+      <Route path={routes.ALL_DECKS} element={<AllDecks />} />
       <Route path={"*"} element={<NotFound />} />
     </Routes>
   )
