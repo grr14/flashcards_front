@@ -7,11 +7,16 @@ import {
   ButtonGroup,
   Image
 } from "@chakra-ui/react"
+import React from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../auth"
 import { ALL_DECKS, PROFILE } from "../constants/routes"
 
-const Home = () => {
+const Home = ({
+  setOpenLoginModal
+}: {
+  setOpenLoginModal: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const navigate = useNavigate()
   const [isLogged] = useAuth()
   const handleBrowseDecks = () => {
@@ -25,6 +30,7 @@ const Home = () => {
     }
 
     //open login modal
+    setOpenLoginModal(true)
   }
 
   return (

@@ -17,23 +17,33 @@ import UserDropdown from "./UserDropdown"
 interface HeaderProps {
   username: string | undefined
   isLogged?: boolean
+  isOpenLoginModal: boolean
+  setOpenLoginModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const Header = ({ username }: HeaderProps) => {
-  const [isLogged] = useAuth()
+const Header = ({
+  username,
+  isLogged,
+  isOpenLoginModal,
+  setOpenLoginModal
+}: HeaderProps) => {
+  //const [isLogged] = useAuth()
   const navigate = useNavigate()
 
   return (
     <Flex alignItems="center" p="5px 10px" bg="blue.700">
       <Box as="a" href={HOME} p="2">
         <Heading size="2xl" color="gray.50">
-          flashcards - {isLogged.toString()}
+          FLASHCARDSLAB
         </Heading>
       </Box>
       <Spacer />
       {!isLogged ? (
         <ButtonGroup spacing="3">
-          <LoginForm />
+          <LoginForm
+            isOpenLoginModal={isOpenLoginModal}
+            setOpenLoginModal={setOpenLoginModal}
+          />
           <RegisterForm />
         </ButtonGroup>
       ) : (

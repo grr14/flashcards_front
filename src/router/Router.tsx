@@ -14,14 +14,19 @@ import AllDecks from "../components/AllDecks"
 
 const Router = ({
   isLogged,
-  user
+  user,
+  setOpenLoginModal
 }: {
   isLogged: boolean
   user: User | undefined
+  setOpenLoginModal: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   return (
     <Routes>
-      <Route path={routes.HOME} element={<Home />} />
+      <Route
+        path={routes.HOME}
+        element={<Home setOpenLoginModal={setOpenLoginModal} />}
+      />
       <Route
         path={routes.SECRET}
         element={
