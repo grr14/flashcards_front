@@ -9,5 +9,7 @@ export const { useAuth, authFetch, login, logout } =
       fetch("/api/refresh", {
         method: "POST",
         body: session.refresh_token
-      }).then((r) => r.json())
+      })
+        .then((r) => r.json())
+        .finally(() => console.log(session.refresh_token))
   })

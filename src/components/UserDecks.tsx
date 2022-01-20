@@ -9,10 +9,11 @@ import {
   Text,
   Button
 } from "@chakra-ui/react"
+import { useState } from "react"
 import { useQuery } from "react-query"
 import { Link } from "react-router-dom"
 import { AllDecks } from "../common/types"
-import { formatDate } from "../common/utils"
+import { formatDate, isSameStart } from "../common/utils"
 import HttpStatusCode from "../constants/httpStatusCode"
 import { DECK } from "../constants/routes"
 import CreateDeckButton from "./CreateDeckButton"
@@ -29,6 +30,11 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
       return data
     }
   )
+
+  const [deckFilterText, setDeckFilterText] = useState("")
+  const handleDeckFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeckFilterText(e.target.value)
+  }
 
   if (isLoading) {
     return (
@@ -67,11 +73,27 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
   }
 
   if (isError) {
-    return <Button onClick={() => refetch()}></Button>
+    return (
+      <Box>
+        <Text>
+          Oops... It seems an error occured. Click below to try reloading the
+          data.
+        </Text>
+        <Button colorScheme="blue" onClick={() => refetch()}>
+          Reload
+        </Button>
+      </Box>
+    )
   }
 
   const formattedDate = (date: Date | undefined) =>
     formatDate(date, true).split(" ").join(" at ")
+
+  const filteredDecks = data?.decks?.filter(
+    (deck) =>
+      isSameStart(deck.name, deckFilterText) ||
+      isSameStart(deck.theme!, deckFilterText)
+  )
 
   return (
     <>
@@ -87,46 +109,60 @@ const UserDecks = ({ userId }: { userId: number | undefined }) => {
           bg="white"
           w="275px"
           placeholder="Search decks by name or category"
+          name="deckFilter"
+          value={deckFilterText}
+          onChange={handleDeckFilter}
         />
       </HStack>
 
-      <Flex wrap="wrap">
-        {data?.decks.map((deck, idx) => {
-          return (
-            <Link key={idx} to={{ pathname: `${DECK}/${deck.id}` }}>
-              <Box
-                bgGradient="linear(to-tr, blue.200, blue.400)"
-                border="solid 1px black"
-                rounded="xl"
-                p="10px"
-                m="5px"
-                _hover={{
-                  bgGradient: "linear(to-tr, blue.300, blue.500)",
-                  cursor: "pointer",
-                  boxShadow: "xl"
-                }}
-              >
-                <Heading size="lg">{deck.name}</Heading>
-                <Text>
-                  <b>Category: </b>
-                  {deck.theme}
-                </Text>
-                {deck.nb_cards && deck.nb_cards > 0 ? (
-                  <Text>
-                    <b>Deck size: </b>
-                    {deck.nb_cards} card{deck.nb_cards > 1 ? "s" : ""}
-                  </Text>
-                ) : (
-                  <Text>This deck is empty.</Text>
-                )}
-                <Text>
-                  <i>Last updated on {formattedDate(deck?.updated_at)}</i>
-                </Text>
-              </Box>
-            </Link>
-          )
-        })}
-      </Flex>
+      {filteredDecks!?.length > 1 ? (
+        <Flex wrap="wrap">
+          {filteredDecks!
+            .sort((d1, d2) => {
+              if (d1.id > d2.id) return 1
+              return -1
+            })
+            .map((deck, idx) => {
+              return (
+                <Link key={idx} to={{ pathname: `${DECK}/${deck.id}` }}>
+                  <Box
+                    bgGradient="linear(to-tr, blue.200, blue.400)"
+                    border="solid 1px black"
+                    rounded="xl"
+                    p="10px"
+                    m="5px"
+                    _hover={{
+                      bgGradient: "linear(to-tr, blue.300, blue.500)",
+                      cursor: "pointer",
+                      boxShadow: "xl"
+                    }}
+                  >
+                    <Heading size="lg">{deck.name}</Heading>
+                    <Text>
+                      <b>Category: </b>
+                      {deck.theme}
+                    </Text>
+                    {deck.nb_cards && deck.nb_cards > 0 ? (
+                      <Text>
+                        <b>Deck size: </b>
+                        {deck.nb_cards} card{deck.nb_cards > 1 ? "s" : ""}
+                      </Text>
+                    ) : (
+                      <Text>This deck is empty.</Text>
+                    )}
+                    <Text>
+                      <i>Last updated on {formattedDate(deck?.updated_at)}</i>
+                    </Text>
+                  </Box>
+                </Link>
+              )
+            })}
+        </Flex>
+      ) : (
+        <Box mt="15px">
+          <Text fontSize="large">No deck matches.</Text>
+        </Box>
+      )}
     </>
   )
 }

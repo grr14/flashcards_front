@@ -23,4 +23,8 @@ const formatTime = (timeInSeconds: number): string => {
     .join(":")
 }
 
-export { formatDate, formatTime }
+/* Check if the input string is a substring of the fullString, ie if they start the same */
+const isSameStart = (fullString: string, input: string): boolean =>
+  fullString.substring(0, input.length) === input
+
+export { formatDate, formatTime, isSameStart }
