@@ -27,10 +27,10 @@ const Home = ({
     if (isLogged) {
       /* this opens the modal in CreateDeckButton */
       navigate(PROFILE, { state: { isFromHome: true } })
+    } else {
+      //open login modal
+      setOpenLoginModal(true)
     }
-
-    //open login modal
-    setOpenLoginModal(true)
   }
 
   return (
