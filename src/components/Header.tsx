@@ -23,11 +23,10 @@ interface HeaderProps {
 
 const Header = ({
   username,
-  isLogged,
   isOpenLoginModal,
   setOpenLoginModal
 }: HeaderProps) => {
-  //const [isLogged] = useAuth()
+  const [isLogged] = useAuth()
   const navigate = useNavigate()
 
   return (
