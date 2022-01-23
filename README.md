@@ -1,6 +1,6 @@
 # Flashcards frontend
 This is the back-end of a personnal full-stack project I am working on. It is written in **Typescript** using **React**. This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and it uses the component library [Chakra UI](https://chakra-ui.com/).
-You can see the app here : https://cranky-wilson-6ddd90.netlify.app/
+You can see the app here : https://flashcardslab.netlify.app/
 
 ## Setup
 If you wish to install the app locally, follow these steps:
